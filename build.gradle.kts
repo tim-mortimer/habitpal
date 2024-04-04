@@ -2,7 +2,7 @@ plugins {
     kotlin("jvm") version "1.9.23"
 }
 
-group = "uk.co.kiteframe"
+group = "uk.co.kiteframe.habitpal"
 version = "1.0-SNAPSHOT"
 
 repositories {
