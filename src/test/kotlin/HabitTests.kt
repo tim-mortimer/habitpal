@@ -1,5 +1,6 @@
 package uk.co.kiteframe.habitpal
 
+import org.junit.jupiter.api.assertThrows
 import java.time.LocalDate
 import java.util.*
 import kotlin.test.Test
@@ -17,5 +18,22 @@ class HabitTests {
         assertEquals("journal", habit.name.toString())
         assertEquals(Daily, habit.type)
         assertEquals(someDate, habit.startedOn)
+    }
+
+    @Test
+    fun `cannot start a habit with an invalid UUID`() {
+        assertThrows<IllegalArgumentException> {
+            startHabit("blah", someName, Daily, someDate)
+        }
+    }
+
+    @Test
+    fun `cannot start a habit with a blank name`() {
+        assertThrows<IllegalArgumentException> {
+            startHabit(someUuid, "", Daily, someDate)
+        }
+        assertThrows<IllegalArgumentException> {
+            startHabit(someUuid, " ", Daily, someDate)
+        }
     }
 }
