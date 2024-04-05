@@ -9,9 +9,10 @@ import java.util.*
 
 fun startHabit(id: String, name: String, habitType: HabitType, startedOn: LocalDate): Either<StartHabitError, Habit> {
     val habitId = HabitId(id) ?: return IdIsNotAUuid.left()
+    val habitName = NonBlankString(name) ?: return BlankName.left()
     return when (habitType) {
         DAILY -> {
-            Habit(habitId, NonBlankString(name), Daily, startedOn).right()
+            Habit(habitId, habitName, Daily, startedOn).right()
         }
     }
 }
@@ -24,6 +25,7 @@ class Habit(val id: HabitId, val name: NonBlankString, val type: HabitTypeConfig
 
 sealed interface StartHabitError
 data object IdIsNotAUuid : StartHabitError
+data object BlankName : StartHabitError
 
 sealed interface HabitTypeConfiguration
 data object Daily : HabitTypeConfiguration
@@ -40,10 +42,17 @@ value class HabitId(private val value: UUID) {
 }
 
 @JvmInline
-value class NonBlankString(private val value: String) {
-    init {
-        require(value.trim().isNotEmpty()) { "Habit name cannot be blank" }
+value class NonBlankString private constructor(private val value: String) {
+    companion object {
+        operator fun invoke(value: String): NonBlankString? {
+            return when (val trimmedValue = value.trim()) {
+                "" -> null
+                else -> NonBlankString(trimmedValue)
+            }
+        }
     }
 
-    override fun toString(): String = value
+    override fun toString(): String {
+        return value
+    }
 }

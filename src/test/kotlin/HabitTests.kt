@@ -1,11 +1,9 @@
 package uk.co.kiteframe.habitpal
 
-import org.junit.jupiter.api.assertThrows
 import java.time.LocalDate
 import java.util.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
 class HabitTests {
     private val someUuid = "f47ac10b-58cc-4372-a567-0e02b2c3d479"
@@ -15,16 +13,16 @@ class HabitTests {
 
     @Test
     fun `starting a habit`() {
-        val habit = startHabit(someUuid, someName, someHabitType, someDate)
-        assertTrue(habit.isRight())
-        habit.getOrNone().map {
-            with(it) {
-                assertEquals(HabitId(UUID.fromString(someUuid)), id)
-                assertEquals("journal", name.toString())
-                assertEquals(Daily, type)
-                assertEquals(someDate, startedOn)
+        startHabit(someUuid, someName, someHabitType, someDate)
+            .getOrNone()
+            .map {
+                with(it) {
+                    assertEquals(HabitId(UUID.fromString(someUuid)), id)
+                    assertEquals("journal", name.toString())
+                    assertEquals(Daily, type)
+                    assertEquals(someDate, startedOn)
+                }
             }
-        }
     }
 
     @Test
@@ -35,11 +33,16 @@ class HabitTests {
 
     @Test
     fun `cannot start a habit with a blank name`() {
-        assertThrows<IllegalArgumentException> {
-            startHabit(someUuid, "", someHabitType, someDate)
-        }
-        assertThrows<IllegalArgumentException> {
-            startHabit(someUuid, " ", someHabitType, someDate)
-        }
+        assertEquals(BlankName, startHabit(someUuid, "", someHabitType, someDate).leftOrNull())
+        assertEquals(BlankName, startHabit(someUuid, " ", someHabitType, someDate).leftOrNull())
+    }
+
+    @Test
+    fun `habit names are trimmed`() {
+        startHabit(someUuid, "journal ", someHabitType, someDate)
+            .getOrNone()
+            .map {
+                assertEquals("journal", it.name.toString())
+            }
     }
 }
