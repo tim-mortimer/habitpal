@@ -5,6 +5,7 @@ import java.time.LocalDate
 import java.util.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class HabitTests {
     private val someUuid = "f47ac10b-58cc-4372-a567-0e02b2c3d479"
@@ -14,18 +15,22 @@ class HabitTests {
 
     @Test
     fun `starting a habit`() {
-        val habit: Habit = startHabit(someUuid, someName, someHabitType, someDate)
-        assertEquals(HabitId(UUID.fromString(someUuid)), habit.id)
-        assertEquals("journal", habit.name.toString())
-        assertEquals(Daily, habit.type)
-        assertEquals(someDate, habit.startedOn)
+        val habit = startHabit(someUuid, someName, someHabitType, someDate)
+        assertTrue(habit.isRight())
+        habit.getOrNone().map {
+            with(it) {
+                assertEquals(HabitId(UUID.fromString(someUuid)), id)
+                assertEquals("journal", name.toString())
+                assertEquals(Daily, type)
+                assertEquals(someDate, startedOn)
+            }
+        }
     }
 
     @Test
     fun `cannot start a habit with an invalid UUID`() {
-        assertThrows<IllegalArgumentException> {
-            startHabit("blah", someName, HabitType.DAILY, someDate)
-        }
+        val result = startHabit("blah", someName, HabitType.DAILY, someDate)
+        assertEquals(IdIsNotAUuid, result.leftOrNull())
     }
 
     @Test

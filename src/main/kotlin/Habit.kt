@@ -1,12 +1,18 @@
 package uk.co.kiteframe.habitpal
 
-import uk.co.kiteframe.habitpal.HabitType.*
+import arrow.core.Either
+import arrow.core.left
+import arrow.core.right
+import uk.co.kiteframe.habitpal.HabitType.DAILY
 import java.time.LocalDate
 import java.util.*
 
-fun startHabit(id: String, name: String, habitType: HabitType, startedOn: LocalDate): Habit {
+fun startHabit(id: String, name: String, habitType: HabitType, startedOn: LocalDate): Either<StartHabitError, Habit> {
+    val habitId = HabitId(id) ?: return IdIsNotAUuid.left()
     return when (habitType) {
-        DAILY -> Habit(HabitId.of(id), NonBlankString(name), Daily, startedOn)
+        DAILY -> {
+            Habit(habitId, NonBlankString(name), Daily, startedOn).right()
+        }
     }
 }
 
@@ -16,13 +22,20 @@ enum class HabitType {
 
 class Habit(val id: HabitId, val name: NonBlankString, val type: HabitTypeConfiguration, val startedOn: LocalDate)
 
+sealed interface StartHabitError
+data object IdIsNotAUuid : StartHabitError
+
 sealed interface HabitTypeConfiguration
 data object Daily : HabitTypeConfiguration
 
 @JvmInline
-value class HabitId(val value: UUID) {
+value class HabitId(private val value: UUID) {
     companion object {
-        fun of(uuid: String) = HabitId(UUID.fromString(uuid))
+        operator fun invoke(uuid: String): HabitId? = try {
+            HabitId(UUID.fromString(uuid))
+        } catch (e: IllegalArgumentException) {
+            null
+        }
     }
 }
 
