@@ -9,11 +9,12 @@ import kotlin.test.assertEquals
 class HabitTests {
     private val someUuid = "f47ac10b-58cc-4372-a567-0e02b2c3d479"
     private val someName = "journal"
+    private val someHabitType = HabitType.DAILY
     private val someDate = LocalDate.of(2024, 3, 4)
 
     @Test
     fun `starting a habit`() {
-        val habit: Habit = startHabit(someUuid, someName, Daily, someDate)
+        val habit: Habit = startHabit(someUuid, someName, someHabitType, someDate)
         assertEquals(HabitId(UUID.fromString(someUuid)), habit.id)
         assertEquals("journal", habit.name.toString())
         assertEquals(Daily, habit.type)
@@ -23,17 +24,17 @@ class HabitTests {
     @Test
     fun `cannot start a habit with an invalid UUID`() {
         assertThrows<IllegalArgumentException> {
-            startHabit("blah", someName, Daily, someDate)
+            startHabit("blah", someName, HabitType.DAILY, someDate)
         }
     }
 
     @Test
     fun `cannot start a habit with a blank name`() {
         assertThrows<IllegalArgumentException> {
-            startHabit(someUuid, "", Daily, someDate)
+            startHabit(someUuid, "", HabitType.DAILY, someDate)
         }
         assertThrows<IllegalArgumentException> {
-            startHabit(someUuid, " ", Daily, someDate)
+            startHabit(someUuid, " ", HabitType.DAILY, someDate)
         }
     }
 }

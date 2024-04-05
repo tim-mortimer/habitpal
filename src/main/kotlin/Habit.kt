@@ -1,16 +1,23 @@
 package uk.co.kiteframe.habitpal
 
+import uk.co.kiteframe.habitpal.HabitType.*
 import java.time.LocalDate
 import java.util.*
 
 fun startHabit(id: String, name: String, habitType: HabitType, startedOn: LocalDate): Habit {
-    return Habit(HabitId.of(id), NonBlankString(name), habitType, startedOn)
+    return when (habitType) {
+        DAILY -> Habit(HabitId.of(id), NonBlankString(name), Daily, startedOn)
+    }
 }
 
-class Habit(val id: HabitId, val name: NonBlankString, val type: HabitType, val startedOn: LocalDate)
+enum class HabitType {
+    DAILY
+}
 
-sealed interface HabitType
-data object Daily : HabitType
+class Habit(val id: HabitId, val name: NonBlankString, val type: HabitTypeConfiguration, val startedOn: LocalDate)
+
+sealed interface HabitTypeConfiguration
+data object Daily : HabitTypeConfiguration
 
 @JvmInline
 value class HabitId(val value: UUID) {
