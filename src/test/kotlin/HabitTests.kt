@@ -29,17 +29,17 @@ class HabitTests {
 
     @Test
     fun `cannot start a habit with an invalid UUID`() {
-        val result = startHabit("blah", someName, HabitType.DAILY, someDate)
+        val result = startHabit("blah", someName, someHabitType, someDate)
         assertEquals(IdIsNotAUuid, result.leftOrNull())
     }
 
     @Test
     fun `cannot start a habit with a blank name`() {
         assertThrows<IllegalArgumentException> {
-            startHabit(someUuid, "", HabitType.DAILY, someDate)
+            startHabit(someUuid, "", someHabitType, someDate)
         }
         assertThrows<IllegalArgumentException> {
-            startHabit(someUuid, " ", HabitType.DAILY, someDate)
+            startHabit(someUuid, " ", someHabitType, someDate)
         }
     }
 }
