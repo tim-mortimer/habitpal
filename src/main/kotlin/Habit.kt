@@ -20,7 +20,7 @@ value class HabitId(val value: UUID) {
 }
 
 @JvmInline
-value class NonBlankString(val value: String) {
+value class NonBlankString(private val value: String) {
     init {
         require(value.trim().isNotEmpty()) { "Habit name cannot be blank" }
     }
