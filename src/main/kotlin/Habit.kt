@@ -4,21 +4,31 @@ import arrow.core.Either
 import arrow.core.left
 import arrow.core.right
 import uk.co.kiteframe.habitpal.HabitType.DAILY
+import uk.co.kiteframe.habitpal.HabitType.MULTIPLE_TIMES_A_DAY
 import java.time.LocalDate
 import java.util.*
 
-fun startHabit(id: String, name: String, habitType: HabitType, startedOn: LocalDate): Either<StartHabitError, Habit> {
+fun startHabit(
+    id: String,
+    name: String,
+    habitType: HabitType,
+    startedOn: LocalDate,
+    times: Int? = null
+): Either<StartHabitError, Habit> {
     val habitId = HabitId(id) ?: return IdIsNotAUuid.left()
     val habitName = NonBlankString(name) ?: return BlankName.left()
     return when (habitType) {
-        DAILY -> {
+        DAILY ->
             Habit(habitId, habitName, Daily, startedOn).right()
-        }
+
+        MULTIPLE_TIMES_A_DAY ->
+            Habit(habitId, habitName, MultipleTimesADay(times!!), startedOn).right()
     }
 }
 
 enum class HabitType {
-    DAILY
+    DAILY,
+    MULTIPLE_TIMES_A_DAY
 }
 
 class Habit(val id: HabitId, val name: NonBlankString, val type: HabitTypeConfiguration, val startedOn: LocalDate)
@@ -29,6 +39,7 @@ data object BlankName : StartHabitError
 
 sealed interface HabitTypeConfiguration
 data object Daily : HabitTypeConfiguration
+data class MultipleTimesADay(val times: Int) : HabitTypeConfiguration
 
 @JvmInline
 value class HabitId(private val value: UUID) {

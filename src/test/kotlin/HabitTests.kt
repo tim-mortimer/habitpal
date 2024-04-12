@@ -26,6 +26,15 @@ class HabitTests {
     }
 
     @Test
+    fun `starting a habit performed multiple time a day`() {
+        startHabit(someUuid, someName, HabitType.MULTIPLE_TIMES_A_DAY, someDate, times = 2)
+            .getOrNone()
+            .map {
+                assertEquals(MultipleTimesADay(2), it.type)
+            }
+    }
+
+    @Test
     fun `cannot start a habit with an invalid UUID`() {
         val result = startHabit("blah", someName, someHabitType, someDate)
         assertEquals(IdIsNotAUuid, result.leftOrNull())
