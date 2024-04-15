@@ -31,7 +31,7 @@ enum class HabitType {
     MULTIPLE_TIMES_A_DAY
 }
 
-class Habit(val id: HabitId, val name: NonBlankString, val type: HabitTypeConfiguration, val startedOn: LocalDate)
+data class Habit(val id: HabitId, val name: NonBlankString, val type: HabitTypeConfiguration, val startedOn: LocalDate)
 
 sealed interface StartHabitError
 data object IdIsNotAUuid : StartHabitError

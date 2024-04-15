@@ -19,18 +19,18 @@ class HabitTests {
     @Test
     fun `starting a habit`() {
         startHabit(someUuid, someName, someHabitType, someDate)
-            .shouldYieldHabitWith {
-                assertEquals(HabitId(UUID.fromString(someUuid)), id)
-                assertEquals("journal", name.toString())
-                assertEquals(Daily, type)
-                assertEquals(someDate, startedOn)
+            .should {
+                assertEquals(
+                    Habit(HabitId(UUID.fromString(someUuid)), NonBlankString("journal")!!, Daily, someDate),
+                    this
+                )
             }
     }
 
     @Test
     fun `starting a habit performed multiple time a day`() {
         startHabit(someUuid, someName, HabitType.MULTIPLE_TIMES_A_DAY, someDate, times = 2)
-            .shouldYieldHabitWith {
+            .should {
                 assertEquals(MultipleTimesADay(2), type)
             }
     }
@@ -49,12 +49,12 @@ class HabitTests {
     @Test
     fun `habit names are trimmed`() {
         startHabit(someUuid, "journal ", someHabitType, someDate)
-            .shouldYieldHabitWith {
+            .should {
                 assertEquals("journal", name.toString())
             }
     }
 
-    private fun Either<StartHabitError, Habit>.shouldYieldHabitWith(assertions: Habit.() -> Unit) {
+    private fun Either<StartHabitError, Habit>.should(assertions: Habit.() -> Unit) {
         assertions.invoke(this.getOrElse { fail("Starting habit failed with ${this.left()}") })
     }
 
