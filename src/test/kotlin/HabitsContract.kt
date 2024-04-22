@@ -18,6 +18,20 @@ abstract class HabitsContract(private val habits: Habits) {
         habits.save(aHabit)
         assertEquals(listOf(aHabit), habits.findAll())
     }
+
+    @Test
+    fun `returns multiple habits`() {
+        val aHabit = Habit(HabitId(UUID.randomUUID()), NonBlankString("wash up")!!, Daily, LocalDate.now())
+        val anotherHabit = Habit(
+            HabitId(UUID.randomUUID()),
+            NonBlankString("dry up")!!,
+            MultipleTimesADay(2),
+            LocalDate.now().minusDays(3)
+        )
+        habits.save(aHabit)
+        habits.save(anotherHabit)
+        assertEquals(listOf(aHabit, anotherHabit), habits.findAll())
+    }
 }
 
 class InMemoryHabitsTests : HabitsContract(InMemoryHabits())
