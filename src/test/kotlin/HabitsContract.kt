@@ -13,7 +13,7 @@ abstract class HabitsContract(private val habits: Habits) {
     }
 
     @Test
-    fun `returns habits when one is saved`() {
+    fun `returns a habits when one is saved`() {
         val aHabit = Habit(HabitId(UUID.randomUUID()), NonBlankString("wash up")!!, Daily, LocalDate.now())
         habits.save(aHabit)
         assertEquals(listOf(aHabit), habits.findAll())
