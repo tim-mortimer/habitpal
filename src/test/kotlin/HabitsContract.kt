@@ -25,7 +25,7 @@ abstract class HabitsContract(private val habits: Habits) {
         val anotherHabit = Habit(
             HabitId(UUID.randomUUID()),
             NonBlankString("dry up")!!,
-            MultipleTimesADay(2),
+            MultipleTimesADay(Multiple(2)!!),
             LocalDate.now().minusDays(3)
         )
         habits.save(aHabit)

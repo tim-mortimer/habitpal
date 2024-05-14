@@ -13,20 +13,24 @@ fun startHabit(
 ): Either<StartHabitError, Habit> {
     val habitId = HabitId(id) ?: return IdIsNotAUuid.left()
     val habitName = NonBlankString(name) ?: return BlankName.left()
+
     return when (habitType) {
         DAILY -> execute(StartDailyHabit(habitId, habitName), startedOn).right()
-        MULTIPLE_TIMES_A_DAY -> execute(StartMultipleTimesADayHabit(habitId, habitName, times!!), startedOn)
-            .right()
+        MULTIPLE_TIMES_A_DAY -> {
+            times ?: return NoMultiplicity.left()
+            val multiple = Multiple(times) ?: return NoMultiplicity.left()
+            execute(StartMultipleTimesADayHabit(habitId, habitName, multiple), startedOn).right()
+        }
     }
 }
 
 fun execute(command: StartDailyHabit, startedOn: LocalDate) = Habit(command.id, command.name, Daily, startedOn)
 
 fun execute(command: StartMultipleTimesADayHabit, startedOn: LocalDate) =
-    Habit(command.id, command.name, MultipleTimesADay(command.times), startedOn)
+    Habit(command.id, command.name, MultipleTimesADay(command.multiple), startedOn)
 
 data class StartDailyHabit(val id: HabitId, val name: NonBlankString)
-data class StartMultipleTimesADayHabit(val id: HabitId, val name: NonBlankString, val times: Int)
+data class StartMultipleTimesADayHabit(val id: HabitId, val name: NonBlankString, val multiple: Multiple)
 
 enum class HabitType {
     DAILY, MULTIPLE_TIMES_A_DAY
@@ -37,10 +41,11 @@ data class Habit(val id: HabitId, val name: NonBlankString, val type: HabitTypeC
 sealed interface StartHabitError
 data object IdIsNotAUuid : StartHabitError
 data object BlankName : StartHabitError
+data object NoMultiplicity : StartHabitError
 
 sealed interface HabitTypeConfiguration
 data object Daily : HabitTypeConfiguration
-data class MultipleTimesADay(val times: Int) : HabitTypeConfiguration
+data class MultipleTimesADay(val multiple: Multiple) : HabitTypeConfiguration
 
 @JvmInline
 value class HabitId(private val value: UUID) {
@@ -66,5 +71,13 @@ value class NonBlankString private constructor(private val value: String) {
 
     override fun toString(): String {
         return value
+    }
+}
+
+@JvmInline
+value class Multiple private constructor(private val value: Int) {
+    companion object {
+        operator fun invoke(times: Int): Multiple? =
+            if (times > 1) Multiple(times) else null
     }
 }

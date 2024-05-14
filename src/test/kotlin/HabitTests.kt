@@ -17,7 +17,7 @@ class HabitTests {
     private val someDate = LocalDate.of(2024, 3, 4)
 
     @Test
-    fun `starting a habit`() {
+    fun `starting a daily habit`() {
         startHabit(someUuid, someName, someHabitType, someDate)
             .should {
                 assertEquals(
@@ -28,10 +28,10 @@ class HabitTests {
     }
 
     @Test
-    fun `starting a habit performed multiple time a day`() {
+    fun `starting a habit performed multiples time a day`() {
         startHabit(someUuid, someName, HabitType.MULTIPLE_TIMES_A_DAY, someDate, times = 2)
             .should {
-                assertEquals(MultipleTimesADay(2), type)
+                assertEquals(MultipleTimesADay(Multiple(2)!!), type)
             }
     }
 
@@ -52,6 +52,21 @@ class HabitTests {
             .should {
                 assertEquals("journal", name.toString())
             }
+    }
+
+    @Test
+    fun `cannot start a multiple times a day habit without multiplicity`() {
+        startHabit(someUuid, someName, HabitType.MULTIPLE_TIMES_A_DAY, someDate, times = 0)
+            .shouldFailWith(NoMultiplicity)
+
+        startHabit(someUuid, someName, HabitType.MULTIPLE_TIMES_A_DAY, someDate, times = 1)
+            .shouldFailWith(NoMultiplicity)
+
+        startHabit(someUuid, someName, HabitType.MULTIPLE_TIMES_A_DAY, someDate, times = -5)
+            .shouldFailWith(NoMultiplicity)
+
+        startHabit(someUuid, someName, HabitType.MULTIPLE_TIMES_A_DAY, someDate, times = null)
+            .shouldFailWith(NoMultiplicity)
     }
 
     private fun Either<StartHabitError, Habit>.should(assertions: Habit.() -> Unit) {
