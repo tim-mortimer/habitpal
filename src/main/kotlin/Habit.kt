@@ -24,6 +24,10 @@ fun startHabit(
     }
 }
 
+enum class HabitType {
+    DAILY, MULTIPLE_TIMES_A_DAY
+}
+
 sealed interface StartHabitError
 data object IdIsNotAUuid : StartHabitError
 data object BlankName : StartHabitError
@@ -36,10 +40,6 @@ fun execute(command: StartMultipleTimesADayHabit, startedOn: LocalDate) =
 
 data class StartDailyHabit(val id: HabitId, val name: NonBlankString)
 data class StartMultipleTimesADayHabit(val id: HabitId, val name: NonBlankString, val multiple: Multiple)
-
-enum class HabitType {
-    DAILY, MULTIPLE_TIMES_A_DAY
-}
 
 data class Habit(val id: HabitId, val name: NonBlankString, val type: HabitTypeConfiguration, val startedOn: LocalDate)
 
