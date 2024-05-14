@@ -9,26 +9,27 @@ import java.time.LocalDate
 import java.util.*
 
 fun startHabit(
-    id: String,
-    name: String,
-    habitType: HabitType,
-    startedOn: LocalDate,
-    times: Int? = null
+    id: String, name: String, habitType: HabitType, startedOn: LocalDate, times: Int? = null
 ): Either<StartHabitError, Habit> {
     val habitId = HabitId(id) ?: return IdIsNotAUuid.left()
     val habitName = NonBlankString(name) ?: return BlankName.left()
     return when (habitType) {
-        DAILY ->
-            Habit(habitId, habitName, Daily, startedOn).right()
-
-        MULTIPLE_TIMES_A_DAY ->
-            Habit(habitId, habitName, MultipleTimesADay(times!!), startedOn).right()
+        DAILY -> execute(StartDailyHabit(habitId, habitName), startedOn).right()
+        MULTIPLE_TIMES_A_DAY -> execute(StartMultipleTimesADayHabit(habitId, habitName, times!!), startedOn)
+            .right()
     }
 }
 
+fun execute(command: StartDailyHabit, startedOn: LocalDate) = Habit(command.id, command.name, Daily, startedOn)
+
+fun execute(command: StartMultipleTimesADayHabit, startedOn: LocalDate) =
+    Habit(command.id, command.name, MultipleTimesADay(command.times), startedOn)
+
+data class StartDailyHabit(val id: HabitId, val name: NonBlankString)
+data class StartMultipleTimesADayHabit(val id: HabitId, val name: NonBlankString, val times: Int)
+
 enum class HabitType {
-    DAILY,
-    MULTIPLE_TIMES_A_DAY
+    DAILY, MULTIPLE_TIMES_A_DAY
 }
 
 data class Habit(val id: HabitId, val name: NonBlankString, val type: HabitTypeConfiguration, val startedOn: LocalDate)
