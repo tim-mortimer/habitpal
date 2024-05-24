@@ -17,11 +17,13 @@ dependencies {
     implementation("org.http4k:http4k-format-jackson")
     implementation("io.arrow-kt:arrow-core:1.2.1")
     testImplementation("org.jetbrains.kotlin:kotlin-test")
+    testImplementation("io.kotest:kotest-assertions-core:5.9.0")
 }
 
 tasks.test {
     useJUnitPlatform()
 }
+
 kotlin {
     jvmToolchain(21)
 }
