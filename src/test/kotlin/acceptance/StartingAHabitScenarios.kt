@@ -31,6 +31,15 @@ class StartingAHabitScenarios {
         }
     }
 
+    @Scenario
+    fun `habit names are trimmed`() = habitScenario {
+        startHabit(name = " journal ")
+
+        viewHabits().shouldBeSingleton { habit ->
+            habit.name shouldBe "journal"
+        }
+    }
+
     private fun fixedClock(zonedDateTime: String) =
         Clock.fixed(Instant.parse(zonedDateTime), ZoneId.of("UTC"))
 
@@ -44,7 +53,7 @@ class StartingAHabitScenarios {
 }
 
 interface InteractionMode : AutoCloseable {
-    fun startHabit(name: String, type: HabitType)
+    fun startHabit(name: String, type: HabitType = HabitType.DAILY)
     fun viewHabits(): List<HabitModel>
     override fun close() = Unit
 }
