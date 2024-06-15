@@ -1,6 +1,5 @@
 package uk.co.kiteframe.habitpal.acceptance
 
-import io.kotest.matchers.collections.shouldBeSingleton
 import io.kotest.matchers.shouldBe
 import uk.co.kiteframe.habitpal.HabitType
 import java.time.LocalDate
@@ -15,7 +14,7 @@ class StartingAHabitScenarios {
             HabitType.DAILY
         )
 
-        viewHabits().shouldBeSingleton { habit ->
+        viewHabits().shouldHaveOneEntryMatching { habit ->
             habit.name shouldBe "journal"
             habit.type shouldBe HabitType.DAILY
             habit.startedOn shouldBe LocalDate.of(2024, 5, 3)
@@ -26,7 +25,7 @@ class StartingAHabitScenarios {
     fun `habit names are trimmed`() = habitScenario {
         startHabit(name = " journal ")
 
-        viewHabits().shouldBeSingleton { habit ->
+        viewHabits().shouldHaveOneEntryMatching { habit ->
             habit.name shouldBe "journal"
         }
     }
