@@ -2,6 +2,7 @@ package uk.co.kiteframe.habitpal.acceptance
 
 import io.kotest.matchers.shouldBe
 import uk.co.kiteframe.habitpal.HabitType
+import uk.co.kiteframe.habitpal.shouldHaveOneEntryMatching
 import java.time.LocalDate
 
 class StartingAHabitScenarios {

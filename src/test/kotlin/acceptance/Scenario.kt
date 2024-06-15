@@ -1,6 +1,5 @@
 package uk.co.kiteframe.habitpal.acceptance
 
-import io.kotest.matchers.collections.shouldBeSingleton
 import org.junit.jupiter.api.DynamicTest
 import org.junit.jupiter.api.TestFactory
 import uk.co.kiteframe.habitpal.*
@@ -19,9 +18,6 @@ fun habitScenario(clock: Clock = Clock.systemUTC(), steps: InteractionMode.() ->
         steps(directInteractionMode)
     }
 }
-
-inline fun <T> Collection<T>.shouldHaveOneEntryMatching(fn: (T) -> Unit): Collection<T> =
-    this.shouldBeSingleton { fn(it) }
 
 interface InteractionMode : AutoCloseable {
     fun startHabit(name: String, type: HabitType = HabitType.DAILY)
