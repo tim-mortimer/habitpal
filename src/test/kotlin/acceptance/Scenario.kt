@@ -6,10 +6,6 @@ import uk.co.kiteframe.habitpal.*
 import java.time.Clock
 import java.time.Instant
 import java.time.ZoneId
-import java.util.*
-
-fun fixedClock(zonedDateTime: String): Clock =
-    Clock.fixed(Instant.parse(zonedDateTime), ZoneId.of("UTC"))
 
 fun habitScenario(clock: Clock = Clock.systemUTC(), steps: InteractionMode.() -> Unit): DynamicTest {
     val directInteractionMode = DirectInteractionMode(HabitApplication(clock, InMemoryHabits()))
@@ -19,19 +15,8 @@ fun habitScenario(clock: Clock = Clock.systemUTC(), steps: InteractionMode.() ->
     }
 }
 
-interface InteractionMode : AutoCloseable {
-    fun startHabit(name: String, type: HabitType = HabitType.DAILY)
-    fun viewHabits(): List<HabitModel>
-    override fun close() = Unit
-}
-
-class DirectInteractionMode(val app: HabitApplication) : InteractionMode {
-    override fun startHabit(name: String, type: HabitType) {
-        app.startHabit(HabitId(UUID.randomUUID().toString())!!, NonBlankString(name)!!, type)
-    }
-
-    override fun viewHabits(): List<HabitModel> = app.viewHabits()
-}
+fun fixedClock(zonedDateTime: String): Clock =
+    Clock.fixed(Instant.parse(zonedDateTime), ZoneId.of("UTC"))
 
 @TestFactory
 @Target(AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.FUNCTION)
