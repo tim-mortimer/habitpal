@@ -1,14 +1,9 @@
 package uk.co.kiteframe.habitpal
 
-import arrow.core.Either
-import arrow.core.getOrElse
-import arrow.core.left
 import java.time.LocalDate
 import java.util.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertTrue
-import kotlin.test.fail
 
 class HabitTests {
     private val someUuid = "f47ac10b-58cc-4372-a567-0e02b2c3d479"
@@ -59,14 +54,5 @@ class HabitTests {
 
         startHabit(someUuid, someName, HabitType.MULTIPLE_TIMES_A_DAY, someDate, times = null)
             .shouldFailWith(NoMultiplicity)
-    }
-
-    private fun Either<StartHabitError, Habit>.should(assertions: Habit.() -> Unit) {
-        assertions.invoke(this.getOrElse { fail("Starting habit failed with ${this.left()}") })
-    }
-
-    private fun Either<StartHabitError, Habit>.shouldFailWith(error: StartHabitError) {
-        assertTrue { this.isLeft() }
-        assertEquals(error, this.leftOrNull())
     }
 }
