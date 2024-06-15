@@ -4,7 +4,7 @@ import java.time.Clock
 import java.time.LocalDate
 import java.time.ZoneId
 
-class HabitApplication(val clock: Clock, val habits: Habits) {
+class HabitApplication(private val clock: Clock, private val habits: Habits) {
     fun startHabit(id: String, name: String, habitType: HabitType) {
         val startedOn = clock.instant().atZone(ZoneId.of("Europe/London")).toLocalDate()
 
