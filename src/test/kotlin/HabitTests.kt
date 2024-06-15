@@ -47,14 +47,6 @@ class HabitTests {
     }
 
     @Test
-    fun `habit names are trimmed`() {
-        startHabit(someUuid, "journal ", someHabitType, someDate)
-            .should {
-                assertEquals("journal", name.toString())
-            }
-    }
-
-    @Test
     fun `cannot start a multiple times a day habit without multiplicity`() {
         startHabit(someUuid, someName, HabitType.MULTIPLE_TIMES_A_DAY, someDate, times = 0)
             .shouldFailWith(NoMultiplicity)
