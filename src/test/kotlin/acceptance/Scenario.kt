@@ -3,10 +3,7 @@ package uk.co.kiteframe.habitpal.acceptance
 import io.kotest.matchers.collections.shouldBeSingleton
 import org.junit.jupiter.api.DynamicTest
 import org.junit.jupiter.api.TestFactory
-import uk.co.kiteframe.habitpal.HabitApplication
-import uk.co.kiteframe.habitpal.HabitModel
-import uk.co.kiteframe.habitpal.HabitType
-import uk.co.kiteframe.habitpal.InMemoryHabits
+import uk.co.kiteframe.habitpal.*
 import java.time.Clock
 import java.time.Instant
 import java.time.ZoneId
@@ -34,7 +31,7 @@ interface InteractionMode : AutoCloseable {
 
 class DirectInteractionMode(val app: HabitApplication) : InteractionMode {
     override fun startHabit(name: String, type: HabitType) {
-        app.startHabit(UUID.randomUUID().toString(), name, type)
+        app.startHabit(HabitId(UUID.randomUUID().toString())!!, NonBlankString(name)!!, type)
     }
 
     override fun viewHabits(): List<HabitModel> = app.viewHabits()
