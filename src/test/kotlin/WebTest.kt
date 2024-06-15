@@ -5,7 +5,7 @@ import java.util.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class HabitTests {
+class WebTest {
     private val someUuid = "f47ac10b-58cc-4372-a567-0e02b2c3d479"
     private val someName = "journal"
     private val someHabitType = HabitType.DAILY
