@@ -43,7 +43,7 @@ value class NonBlankString private constructor(private val value: String) {
 }
 
 @JvmInline
-value class Multiple private constructor(private val value: Int) {
+value class Multiple private constructor(val value: Int) {
     companion object {
         operator fun invoke(times: Int): Multiple? =
             if (times > 1) Multiple(times) else null

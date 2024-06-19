@@ -23,6 +23,24 @@ class StartingAHabitScenarios {
     }
 
     @Scenario
+    fun `starting a habit performed multiple times a day`() = habitScenario(
+        clock = fixedClock("2024-05-03T10:15:30Z")
+    ) {
+        startHabit(
+            name = "do ten press ups",
+            type = HabitType.MULTIPLE_TIMES_A_DAY,
+            times = 2
+        )
+
+        viewHabits().shouldHaveOneEntryMatching { habit ->
+            habit.name shouldBe "do ten press ups"
+            habit.type shouldBe HabitType.MULTIPLE_TIMES_A_DAY
+            habit.times shouldBe 2
+            habit.startedOn shouldBe LocalDate.of(2024, 5, 3)
+        }
+    }
+
+    @Scenario
     fun `habit names are trimmed`() = habitScenario {
         startHabit(name = " journal ")
 

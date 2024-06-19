@@ -16,7 +16,14 @@ class HabitApplication(private val clock: Clock, private val habits: Habits) {
     private fun dateNow(): LocalDate = clock.instant().atZone(ZoneId.of("Europe/London")).toLocalDate()
 
     fun viewHabits(): List<HabitModel> =
-        habits.findAll().map { habit -> HabitModel(habit.name.toString(), habit.type.toViewType(), habit.startedOn) }
+        habits.findAll().map { habit ->
+            HabitModel(
+                habit.name.toString(),
+                habit.type.toViewType(),
+                habit.type.toViewTimes(),
+                habit.startedOn
+            )
+        }
 }
 
 private fun HabitTypeConfiguration.toViewType(): HabitType {
@@ -26,4 +33,11 @@ private fun HabitTypeConfiguration.toViewType(): HabitType {
     }
 }
 
-data class HabitModel(val name: String, val type: HabitType, val startedOn: LocalDate)
+private fun HabitTypeConfiguration.toViewTimes(): Int? {
+    return when (this) {
+        Daily -> null
+        is MultipleTimesADay -> multiple.value
+    }
+}
+
+data class HabitModel(val name: String, val type: HabitType, val times: Int?, val startedOn: LocalDate)
