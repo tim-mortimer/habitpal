@@ -5,19 +5,15 @@ import java.time.LocalDate
 import java.time.ZoneId
 
 class HabitApplication(private val clock: Clock, private val habits: Habits) {
-    fun startHabit(id: HabitId, name: NonBlankString, habitType: HabitType) {
-        val startedOn = clock.instant().atZone(ZoneId.of("Europe/London")).toLocalDate()
-
-        val habit = when (habitType) {
-            HabitType.DAILY -> {
-                execute(StartDailyHabit(id, name), startedOn)
-            }
-
-            HabitType.MULTIPLE_TIMES_A_DAY -> TODO()
-        }
-
-        habits.save(habit)
+    fun startDailyHabit(id: HabitId, name: NonBlankString): Habit {
+        return execute(StartDailyHabit(id, name), dateNow()).also { habits.save(it) }
     }
+
+    fun startMultipleTimesADayHabit(id: HabitId, name: NonBlankString, multiple: Multiple): Habit {
+        return execute(StartMultipleTimesADayHabit(id, name, multiple), dateNow()).also { habits.save(it) }
+    }
+
+    private fun dateNow(): LocalDate = clock.instant().atZone(ZoneId.of("Europe/London")).toLocalDate()
 
     fun viewHabits(): List<HabitModel> =
         habits.findAll().map { habit -> HabitModel(habit.name.toString(), habit.type.toViewType(), habit.startedOn) }

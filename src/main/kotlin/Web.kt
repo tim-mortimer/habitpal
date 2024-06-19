@@ -10,39 +10,35 @@ import org.http4k.core.Status
 import org.http4k.format.Jackson.auto
 import org.http4k.server.Undertow
 import org.http4k.server.asServer
-import java.time.LocalDate
+import java.time.Clock
 
 fun main() {
-    val requestLens = Body.auto<StartHabitRequest>().toLens()
-    val app: (Request) -> Response = { request: Request ->
-        val extractedRequest = requestLens(request)
-        val result = startHabit(
-            extractedRequest.id,
-            extractedRequest.name,
-            extractedRequest.habitType,
-            LocalDate.now(),
-            extractedRequest.times
-        )
-        result.toResponse()
-    }
-
-    app.asServer(Undertow(8000)).start()
+    application().asServer(Undertow(8000)).start()
 }
 
-data class StartHabitRequest(val id: String, val name: String, val habitType: HabitType, val times: Int)
+fun application(): (Request) -> Response {
+    val requestLens = Body.auto<StartHabitRequest>().toLens()
+    val application = HabitApplication(Clock.systemUTC(), InMemoryHabits())
+    return { request: Request ->
+        val extractedRequest = requestLens(request)
+        val result = startHabit(application, extractedRequest)
+        result.toResponse()
+    }
+}
 
-fun startHabit(
-    id: String, name: String, habitType: HabitType, startedOn: LocalDate, times: Int? = null
+data class StartHabitRequest(val id: String, val name: String, val habitType: HabitType, val times: Int? = null)
+
+private fun startHabit(
+    application: HabitApplication, request: StartHabitRequest,
 ): Either<StartHabitError, Habit> {
-    val habitId = HabitId(id) ?: return IdIsNotAUuid.left()
-    val habitName = NonBlankString(name) ?: return BlankName.left()
+    val habitId = HabitId(request.id) ?: return IdIsNotAUuid.left()
+    val habitName = NonBlankString(request.name) ?: return BlankName.left()
 
-    return when (habitType) {
-        HabitType.DAILY -> execute(StartDailyHabit(habitId, habitName), startedOn).right()
+    when (request.habitType) {
+        HabitType.DAILY -> return application.startDailyHabit(habitId, habitName).right()
         HabitType.MULTIPLE_TIMES_A_DAY -> {
-            times ?: return NoMultiplicity.left()
-            val multiple = Multiple(times) ?: return NoMultiplicity.left()
-            execute(StartMultipleTimesADayHabit(habitId, habitName, multiple), startedOn).right()
+            val multiple = Multiple(request.times ?: 0) ?: return NoMultiplicity.left()
+            return application.startMultipleTimesADayHabit(habitId, habitName, multiple).right()
         }
     }
 }
@@ -54,7 +50,7 @@ private fun Either<StartHabitError, Habit>.toResponse(): Response {
     )
 }
 
-private fun StartHabitError.toMessage() = when (this) {
+fun StartHabitError.toMessage() = when (this) {
     BlankName -> "Name cannot be blank"
     IdIsNotAUuid -> "Provided ID is not a valid UUID"
     NoMultiplicity -> "A habit performed multiple times per day can't have a multiplicity less than two"
