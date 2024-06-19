@@ -9,7 +9,7 @@ sealed interface InteractionMode : AutoCloseable {
     override fun close() = Unit
 }
 
-class DirectInteractionMode(val app: HabitApplication) : InteractionMode {
+class DirectInteractionMode(private val app: HabitApplication) : InteractionMode {
     override fun startHabit(name: String, type: HabitType, times: Int?) {
         when (type) {
             HabitType.DAILY -> app.startDailyHabit(HabitId(UUID.randomUUID().toString())!!, NonBlankString(name)!!)
