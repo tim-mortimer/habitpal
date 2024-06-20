@@ -7,16 +7,8 @@ enum class HabitType {
     DAILY, MULTIPLE_TIMES_A_DAY
 }
 
-fun execute(command: StartDailyHabit, startedOn: LocalDate) = Habit(command.id, command.name, Daily, startedOn)
-
-fun execute(command: StartMultipleTimesADayHabit, startedOn: LocalDate) =
-    Habit(command.id, command.name, MultipleTimesADay(command.multiple), startedOn)
-
-data class StartDailyHabit(val id: HabitId, val name: NonBlankString)
-data class StartMultipleTimesADayHabit(val id: HabitId, val name: NonBlankString, val multiple: Multiple)
-
 @JvmInline
-value class HabitId(private val value: UUID) {
+value class HabitId(val value: UUID) {
     companion object {
         operator fun invoke(uuid: String): HabitId? = try {
             HabitId(UUID.fromString(uuid))
@@ -50,7 +42,17 @@ value class Multiple private constructor(val value: Int) {
     }
 }
 
-data class Habit(val id: HabitId, val name: NonBlankString, val type: HabitTypeConfiguration, val startedOn: LocalDate)
+data class Habit(
+    val id: HabitId,
+    val name: NonBlankString,
+    val type: HabitTypeConfiguration,
+    val startedOn: LocalDate,
+    private val archived: Boolean = false
+) {
+    val isArchived: Boolean get() = archived
+
+    fun archive(): Habit = this.copy(archived = true)
+}
 
 sealed interface HabitTypeConfiguration
 data object Daily : HabitTypeConfiguration

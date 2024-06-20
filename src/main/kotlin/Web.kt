@@ -30,7 +30,7 @@ data class StartHabitRequest(val id: String, val name: String, val habitType: Ha
 
 private fun startHabit(
     application: HabitApplication, request: StartHabitRequest,
-): Either<StartHabitError, Habit> {
+): Either<StartHabitError, HabitModel> {
     val habitId = HabitId(request.id) ?: return IdIsNotAUuid.left()
     val habitName = NonBlankString(request.name) ?: return BlankName.left()
 
@@ -43,7 +43,7 @@ private fun startHabit(
     }
 }
 
-private fun Either<StartHabitError, Habit>.toResponse(): Response {
+private fun Either<StartHabitError, HabitModel>.toResponse(): Response {
     return this.fold(
         { error -> Response(Status.BAD_REQUEST).body(error.toMessage()) },
         { Response(Status.OK) }
