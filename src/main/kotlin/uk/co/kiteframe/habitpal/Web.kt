@@ -3,11 +3,10 @@ package uk.co.kiteframe.habitpal
 import arrow.core.Either
 import arrow.core.left
 import arrow.core.right
-import org.http4k.core.Body
-import org.http4k.core.Request
-import org.http4k.core.Response
-import org.http4k.core.Status
+import org.http4k.core.*
 import org.http4k.format.Jackson.auto
+import org.http4k.routing.bind
+import org.http4k.routing.routes
 import org.http4k.server.Undertow
 import org.http4k.server.asServer
 import java.time.Clock
@@ -16,14 +15,16 @@ fun main() {
     application().asServer(Undertow(8000)).start()
 }
 
-fun application(): (Request) -> Response {
+fun application(): HttpHandler {
     val requestLens = Body.auto<StartHabitRequest>().toLens()
     val application = HabitApplication(Clock.systemUTC(), InMemoryHabits())
-    return { request: Request ->
-        val extractedRequest = requestLens(request)
-        val result = startHabit(application, extractedRequest)
-        result.toResponse()
-    }
+    return routes(
+        "/habits" bind Method.POST to { request: Request ->
+            val extractedRequest = requestLens(request)
+            val result = startHabit(application, extractedRequest)
+            result.toResponse()
+        }
+    )
 }
 
 data class StartHabitRequest(val id: String, val name: String, val habitType: HabitType, val times: Int? = null)

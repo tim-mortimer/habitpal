@@ -1,0 +1,10 @@
+name: hapitpal
+runtime:
+  name: nodejs
+  options:
+    packagemanager: npm
+description: '"A habit tracking program"'
+config:
+  pulumi:tags:
+    value:
+      pulumi:template: aws-typescript

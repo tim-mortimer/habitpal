@@ -79,7 +79,7 @@ class WebTest {
             )
         }
 
-        return client(Request(Method.POST, "/").body(requestJson.toString()))
+        return client(Request(Method.POST, "/habits").body(requestJson.toString()))
     }
 
     private fun Response.shouldSucceed() {
