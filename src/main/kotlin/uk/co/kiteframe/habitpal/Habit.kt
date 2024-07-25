@@ -1,4 +1,4 @@
-package uk.co.kiteframe.habitpal
+package uk.co.kiteframe.habitpal.uk.co.kiteframe.habitpal
 
 import java.time.LocalDate
 import java.util.*

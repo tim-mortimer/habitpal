@@ -1,8 +1,8 @@
-package uk.co.kiteframe.habitpal.acceptance
+package uk.co.kiteframe.habitpal.uk.co.kiteframe.hapitpal.acceptance
 
 import io.kotest.matchers.shouldBe
-import uk.co.kiteframe.habitpal.HabitType
-import uk.co.kiteframe.habitpal.shouldHaveOneEntryMatching
+import uk.co.kiteframe.habitpal.uk.co.kiteframe.habitpal.HabitType
+import uk.co.kiteframe.habitpal.uk.co.kiteframe.habitpal.shouldHaveOneEntryMatching
 import java.time.LocalDate
 
 class StartingAHabitScenarios {

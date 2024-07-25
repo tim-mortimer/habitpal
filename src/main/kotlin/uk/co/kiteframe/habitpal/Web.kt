@@ -9,6 +9,7 @@ import org.http4k.routing.bind
 import org.http4k.routing.routes
 import org.http4k.server.Undertow
 import org.http4k.server.asServer
+import uk.co.kiteframe.habitpal.uk.co.kiteframe.habitpal.*
 import java.time.Clock
 
 fun main() {

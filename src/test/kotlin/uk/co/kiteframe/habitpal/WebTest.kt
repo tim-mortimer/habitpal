@@ -1,9 +1,10 @@
-package uk.co.kiteframe.habitpal
+package uk.co.kiteframe.habitpal.uk.co.kiteframe.habitpal
 
 import org.http4k.core.Method
 import org.http4k.core.Request
 import org.http4k.core.Response
 import org.http4k.core.Status
+import uk.co.kiteframe.habitpal.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import org.http4k.format.Jackson as json

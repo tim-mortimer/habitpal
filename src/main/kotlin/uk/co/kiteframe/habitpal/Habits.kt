@@ -1,4 +1,4 @@
-package uk.co.kiteframe.habitpal
+package uk.co.kiteframe.habitpal.uk.co.kiteframe.habitpal
 
 interface Habits {
     fun save(habit: Habit)

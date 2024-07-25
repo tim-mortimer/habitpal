@@ -1,8 +1,9 @@
-package uk.co.kiteframe.habitpal.acceptance
+package uk.co.kiteframe.habitpal.uk.co.kiteframe.hapitpal.acceptance
 
 import org.junit.jupiter.api.DynamicTest
 import org.junit.jupiter.api.TestFactory
-import uk.co.kiteframe.habitpal.*
+import uk.co.kiteframe.habitpal.uk.co.kiteframe.habitpal.HabitApplication
+import uk.co.kiteframe.habitpal.uk.co.kiteframe.habitpal.InMemoryHabits
 import java.time.Clock
 import java.time.Instant
 import java.time.ZoneId
