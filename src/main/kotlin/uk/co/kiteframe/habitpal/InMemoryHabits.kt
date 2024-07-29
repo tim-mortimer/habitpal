@@ -1,4 +1,4 @@
-package uk.co.kiteframe.habitpal.uk.co.kiteframe.habitpal
+package uk.co.kiteframe.habitpal
 
 class InMemoryHabits : Habits {
     private val habits: MutableMap<HabitId, Habit> = mutableMapOf()

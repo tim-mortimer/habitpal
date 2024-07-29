@@ -1,4 +1,4 @@
-package uk.co.kiteframe.habitpal.uk.co.kiteframe.habitpal
+package uk.co.kiteframe.habitpal
 
 import io.kotest.matchers.collections.shouldBeSingleton
 

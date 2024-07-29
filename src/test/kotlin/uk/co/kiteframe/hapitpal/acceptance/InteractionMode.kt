@@ -1,6 +1,6 @@
-package uk.co.kiteframe.habitpal.uk.co.kiteframe.hapitpal.acceptance
+package uk.co.kiteframe.hapitpal.acceptance
 
-import uk.co.kiteframe.habitpal.uk.co.kiteframe.habitpal.*
+import uk.co.kiteframe.habitpal.*
 import java.util.*
 
 sealed interface InteractionMode : AutoCloseable {

@@ -14,7 +14,7 @@ import org.http4k.server.asServer
 import org.http4k.template.HandlebarsTemplates
 import org.http4k.template.ViewModel
 import org.http4k.template.viewModel
-import uk.co.kiteframe.habitpal.uk.co.kiteframe.habitpal.*
+import uk.co.kiteframe.habitpal.*
 import java.time.Clock
 
 fun main() {
@@ -60,7 +60,7 @@ private fun startHabit(
 private fun Either<StartHabitError, HabitModel>.toResponse(): Response {
     return this.fold(
         { error -> Response(Status.BAD_REQUEST).body(error.toMessage()) },
-        { Response(Status.OK) }
+        { Response(OK) }
     )
 }
 

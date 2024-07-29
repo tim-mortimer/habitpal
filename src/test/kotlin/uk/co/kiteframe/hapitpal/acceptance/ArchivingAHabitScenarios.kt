@@ -1,8 +1,8 @@
-package uk.co.kiteframe.habitpal.uk.co.kiteframe.hapitpal.acceptance
+package uk.co.kiteframe.hapitpal.acceptance
 
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.shouldBe
-import uk.co.kiteframe.habitpal.uk.co.kiteframe.habitpal.shouldHaveOneEntryMatching
+import uk.co.kiteframe.habitpal.shouldHaveOneEntryMatching
 
 class ArchivingAHabitScenarios {
     @Scenario
