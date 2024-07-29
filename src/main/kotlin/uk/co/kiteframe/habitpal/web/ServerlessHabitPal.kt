@@ -1,4 +1,4 @@
-package uk.co.kiteframe.habitpal
+package uk.co.kiteframe.habitpal.web
 
 import org.http4k.serverless.ApiGatewayV2LambdaFunction
 

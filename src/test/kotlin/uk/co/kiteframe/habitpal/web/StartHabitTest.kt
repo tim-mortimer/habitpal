@@ -1,15 +1,15 @@
-package uk.co.kiteframe.habitpal.uk.co.kiteframe.habitpal
+package uk.co.kiteframe.habitpal.web
 
 import org.http4k.core.Method
 import org.http4k.core.Request
 import org.http4k.core.Response
 import org.http4k.core.Status
-import uk.co.kiteframe.habitpal.*
+import uk.co.kiteframe.habitpal.uk.co.kiteframe.habitpal.HabitType
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import org.http4k.format.Jackson as json
 
-class WebTest {
+class StartHabitTest {
     private val someUuid = "f47ac10b-58cc-4372-a567-0e02b2c3d479"
     private val someName = "journal"
     private val someHabitType = HabitType.DAILY

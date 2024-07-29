@@ -1,32 +1,44 @@
-package uk.co.kiteframe.habitpal
+package uk.co.kiteframe.habitpal.web
 
 import arrow.core.Either
 import arrow.core.left
 import arrow.core.right
 import org.http4k.core.*
+import org.http4k.core.ContentType.Companion.TEXT_HTML
+import org.http4k.core.Status.Companion.OK
 import org.http4k.format.Jackson.auto
 import org.http4k.routing.bind
 import org.http4k.routing.routes
 import org.http4k.server.Undertow
 import org.http4k.server.asServer
+import org.http4k.template.HandlebarsTemplates
+import org.http4k.template.ViewModel
+import org.http4k.template.viewModel
 import uk.co.kiteframe.habitpal.uk.co.kiteframe.habitpal.*
 import java.time.Clock
 
 fun main() {
-    application().asServer(Undertow(8000)).start()
+    application(InMemoryHabits()).asServer(Undertow(8000)).start()
 }
 
-fun application(): HttpHandler {
+fun application(habits: Habits = InMemoryHabits()): HttpHandler {
     val requestLens = Body.auto<StartHabitRequest>().toLens()
-    val application = HabitApplication(Clock.systemUTC(), InMemoryHabits())
+    val application = HabitApplication(Clock.systemUTC(), habits)
+    val view = Body.viewModel(HandlebarsTemplates().CachingClasspath(), TEXT_HTML).toLens()
+
     return routes(
-        "/habits" bind Method.POST to { request: Request ->
-            val extractedRequest = requestLens(request)
-            val result = startHabit(application, extractedRequest)
-            result.toResponse()
-        }
+        "/habits" bind routes(
+            Method.POST to { request: Request ->
+                val extractedRequest = requestLens(request)
+                val result = startHabit(application, extractedRequest)
+                result.toResponse()
+            },
+            Method.GET to { Response(OK).with(view of ViewHabits(application.viewHabits())) }
+        ),
     )
 }
+
+data class ViewHabits(val habits: List<HabitModel>) : ViewModel
 
 data class StartHabitRequest(val id: String, val name: String, val habitType: HabitType, val times: Int? = null)
 

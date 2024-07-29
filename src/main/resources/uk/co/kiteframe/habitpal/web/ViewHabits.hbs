@@ -1,0 +1,24 @@
+<html lang="en">
+<head>
+    <title>Habitpal</title>
+</head>
+<body>
+<h1>Habitpal</h1>
+<table>
+    <thead>
+    <tr>
+        <th scope="col">Todo</th>
+        <th scope="col">Type</th>
+    </tr>
+    </thead>
+    <tbody>
+    {{#each habits}}
+        <tr>
+            <td>{{this.name}}</td>
+            <td>{{#if this.times }}{{this.times}} X {{/if}}{{this.type}}</td>
+        </tr>
+    {{/each}}
+    </tbody>
+</table>
+</body>
+</html>

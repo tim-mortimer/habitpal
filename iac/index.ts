@@ -27,7 +27,7 @@ new RolePolicyAttachment("habitpal-default-role-policy",
 
 const lambdaFunction = new aws.lambda.Function("habitpal", {
     code: new pulumi.asset.FileArchive("../build/distributions/habitpal-1.0-SNAPSHOT.zip"),
-    handler: "uk.co.kiteframe.hapitpal.ServerlessHabitPal",
+    handler: "uk.co.kiteframe.hapitpal.web.ServerlessHabitPal",
     role: defaultRole.arn,
     runtime: "java21",
     memorySize: 256,

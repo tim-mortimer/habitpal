@@ -1,0 +1,26 @@
+<html lang="en">
+  <head>
+    <title>Habitpal</title>
+  </head>
+  <body>
+    <h1>Habitpal</h1>
+    <table>
+      <thead>
+        <tr>
+          <th scope="col">Todo</th>
+          <th scope="col">Type</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>wash up</td>
+          <td>DAILY</td>
+        </tr>
+        <tr>
+          <td>dry up</td>
+          <td>2 X MULTIPLE_TIMES_A_DAY</td>
+        </tr>
+      </tbody>
+    </table>
+  </body>
+</html>
