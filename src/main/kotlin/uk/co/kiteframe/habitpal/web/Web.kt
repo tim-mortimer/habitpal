@@ -12,19 +12,25 @@ import org.http4k.routing.routes
 import org.http4k.server.Undertow
 import org.http4k.server.asServer
 import org.http4k.template.HandlebarsTemplates
+import org.http4k.template.TemplateRenderer
 import org.http4k.template.ViewModel
 import org.http4k.template.viewModel
 import uk.co.kiteframe.habitpal.*
 import java.time.Clock
 
 fun main() {
-    application(InMemoryHabits()).asServer(Undertow(8000)).start()
+    application(InMemoryHabits())
+        .asServer(Undertow(8000))
+        .start()
 }
 
-fun application(habits: Habits = InMemoryHabits()): HttpHandler {
+fun application(
+    habits: Habits = InMemoryHabits(),
+    renderer: TemplateRenderer = HandlebarsTemplates().CachingClasspath()
+): HttpHandler {
     val requestLens = Body.auto<StartHabitRequest>().toLens()
     val application = HabitApplication(Clock.systemUTC(), habits)
-    val view = Body.viewModel(HandlebarsTemplates().CachingClasspath(), TEXT_HTML).toLens()
+    val view = Body.viewModel(renderer, TEXT_HTML).toLens()
 
     return routes(
         "/habits" bind routes(
