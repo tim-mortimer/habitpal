@@ -7,6 +7,7 @@ import org.http4k.testing.HtmlApprovalTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.extension.ExtendWith
 import uk.co.kiteframe.habitpal.*
+import uk.co.kiteframe.habitpal.persistence.InMemoryHabits
 import java.time.LocalDate
 import java.util.*
 import kotlin.test.Test

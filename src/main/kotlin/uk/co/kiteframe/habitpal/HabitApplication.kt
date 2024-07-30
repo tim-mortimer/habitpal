@@ -1,5 +1,6 @@
 package uk.co.kiteframe.habitpal
 
+import uk.co.kiteframe.habitpal.persistence.Habits
 import java.time.Clock
 import java.time.LocalDate
 import java.time.ZoneId

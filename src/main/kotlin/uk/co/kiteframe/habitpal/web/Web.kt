@@ -16,6 +16,8 @@ import org.http4k.template.TemplateRenderer
 import org.http4k.template.ViewModel
 import org.http4k.template.viewModel
 import uk.co.kiteframe.habitpal.*
+import uk.co.kiteframe.habitpal.persistence.Habits
+import uk.co.kiteframe.habitpal.persistence.InMemoryHabits
 import java.time.Clock
 
 fun main() {
