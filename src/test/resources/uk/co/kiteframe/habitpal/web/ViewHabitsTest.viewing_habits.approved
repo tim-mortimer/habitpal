@@ -1,9 +1,46 @@
 <html lang="en">
   <head>
     <title>Habitpal</title>
+    <script src="/htmx.min.js"></script>
   </head>
   <body>
     <h1>Habitpal</h1>
+    <form hx-post="/habits">
+      <div>
+        <label>
+          <label for="id">ID</label>
+          <input id="id" name="id" type="text"/>
+        </label>
+      </div>
+      <div>
+        <label>
+          <label for="name">Name</label>
+          <input id="name" name="name" type="text"/>
+        </label>
+      </div>
+      <fieldset>
+        <legend>Type</legend>
+        <ul>
+          <li>
+            <label for="daily">Daily</label>
+            <input type="radio" id="daily" name="type" value="DAILY"/>
+          </li>
+          <li>
+            <label for="multiple_times_a_day">Multiple times a day</label>
+            <input type="radio" id="multiple_times_a_day" name="type" value="MULTIPLE_TIMES_A_DAY"/>
+          </li>
+        </ul>
+      </fieldset>
+      <div>
+        <label>
+          <label for="times">Times</label>
+          <input id="times" name="times" type="number" value=""/>
+        </label>
+      </div>
+      <div>
+        <button type="submit">Submit</button>
+      </div>
+    </form>
     <table>
       <thead>
         <tr>

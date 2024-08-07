@@ -1,94 +1,86 @@
 package uk.co.kiteframe.habitpal.web
 
-import org.http4k.core.Method
-import org.http4k.core.Request
-import org.http4k.core.Response
-import org.http4k.core.Status
+import org.http4k.core.*
+import org.http4k.core.body.form
+import org.http4k.core.body.toBody
 import uk.co.kiteframe.habitpal.HabitType
 import kotlin.test.Test
+import kotlin.test.assertContains
 import kotlin.test.assertEquals
-import org.http4k.format.Jackson as json
 
 class StartHabitTest {
     private val someUuid = "f47ac10b-58cc-4372-a567-0e02b2c3d479"
     private val someName = "journal"
-    private val someHabitType = HabitType.DAILY
 
     private val client = application()
 
     @Test
     fun `starting a daily habit`() {
-        submitStartHabitRequest(id = someUuid, name = someName, type = someHabitType).shouldSucceed()
+        client(startHabitRequest().withValidDailyForm()).shouldSucceed()
     }
 
     @Test
     fun `starting a habit performed multiples time a day`() {
-        submitStartHabitRequest(
-            id = someUuid,
-            name = someName,
-            type = HabitType.MULTIPLE_TIMES_A_DAY,
-            times = 2
-        ).shouldSucceed()
+        client(startHabitRequest().withValidMultipleForm()).shouldSucceed()
     }
 
     @Test
-    fun `cannot start a habit with an invalid UUID`() {
-        submitStartHabitRequest(id = "blah").shouldFailWith(IdIsNotAUuid)
+    fun validations() {
+        val dailyRequest = startHabitRequest().withValidDailyForm()
+        val multipleRequest = startHabitRequest().withValidMultipleForm()
+
+        client(dailyRequest.formWithout("id")).shouldFailWith("formData 'id' is required")
+        client(dailyRequest.replacingForm("id", "")).shouldFailWith("formData 'id' is required")
+        client(dailyRequest.replacingForm("id", "blah")).shouldFailWith("formData 'id' must be string")
+
+        client(dailyRequest.formWithout("name")).shouldFailWith("formData 'name' is required")
+        client(dailyRequest.replacingForm("name", "")).shouldFailWith("formData 'name' is required")
+        client(dailyRequest.replacingForm("name", " ")).shouldFailWith("formData 'name' must be string")
+
+        client(dailyRequest.formWithout("type")).shouldFailWith("formData 'type' is required")
+        client(dailyRequest.replacingForm("type", "INVALID")).shouldFailWith("formData 'type' must be string")
+
+        client(dailyRequest.formWithout("times")).shouldSucceed()
+        client(dailyRequest.form("times", "")).shouldSucceed()
+        client(multipleRequest.formWithout("times")).shouldFailWith("formData 'times' must be >= 2")
+        client(multipleRequest.replacingForm("times", "")).shouldFailWith("formData 'times' must be >= 2")
+        client(multipleRequest.replacingForm("times", "0")).shouldFailWith("formData 'times' must be >= 2")
+        client(multipleRequest.replacingForm("times", "1")).shouldFailWith("formData 'times' must be >= 2")
+        client(multipleRequest.replacingForm("times", "-5")).shouldFailWith("formData 'times' must be >= 2")
     }
 
-    @Test
-    fun `cannot start a habit with a blank name`() {
-        submitStartHabitRequest(name = "").shouldFailWith(BlankName)
-        submitStartHabitRequest(name = " ").shouldFailWith(BlankName)
-    }
+    private fun startHabitRequest() = Request(Method.POST, "/habits")
+        .header("Content-Type", ContentType.APPLICATION_FORM_URLENCODED.value)
+        .header("HX-Request", "true")
 
-    @Test
-    fun `cannot start a multiple times a day habit without multiplicity`() {
-        submitStartHabitRequest(
-            type = HabitType.MULTIPLE_TIMES_A_DAY,
-            times = 0
-        ).shouldFailWith(NoMultiplicity)
+    private fun Request.withValidDailyForm() = formData(
+        "id" to someUuid,
+        "name" to someName,
+        "type" to HabitType.DAILY.toString()
+    )
 
-        submitStartHabitRequest(
-            type = HabitType.MULTIPLE_TIMES_A_DAY,
-            times = 1
-        ).shouldFailWith(NoMultiplicity)
+    private fun Request.withValidMultipleForm() = formData(
+        "id" to someUuid,
+        "name" to someName,
+        "type" to HabitType.MULTIPLE_TIMES_A_DAY.toString(),
+        "times" to "2"
+    )
 
-        submitStartHabitRequest(
-            type = HabitType.MULTIPLE_TIMES_A_DAY,
-            times = -5
-        ).shouldFailWith(NoMultiplicity)
+    private fun Request.formData(vararg formData: Pair<String, String>): Request =
+        this.body(form().plus(formData).toBody())
 
-        submitStartHabitRequest(
-            type = HabitType.MULTIPLE_TIMES_A_DAY,
-            times = null
-        ).shouldFailWith(NoMultiplicity)
-    }
+    private fun Request.formWithout(name: String): Request =
+        body(form().filter { it.first != name }.toBody())
 
-    private fun submitStartHabitRequest(
-        id: String = someUuid,
-        name: String = someName,
-        type: HabitType = someHabitType,
-        times: Int? = null
-    ): Response {
-        val requestJson = json {
-            obj(
-                "id" to string(id),
-                "name" to string(name),
-                "habitType" to string(type.toString()),
-                "times" to if (times == null) nullNode() else number(times)
-            )
-        }
-
-        return client(Request(Method.POST, "/habits").body(requestJson.toString()))
-    }
+    private fun Request.replacingForm(name: String, value: String) =
+        formWithout(name).form(name, value)
 
     private fun Response.shouldSucceed() {
         assertEquals(Status.OK, this.status)
     }
 
-    private fun Response.shouldFailWith(error: StartHabitError) {
+    private fun Response.shouldFailWith(error: String) {
         assertEquals(Status.BAD_REQUEST, this.status)
-        assertEquals(error.toMessage(), this.body.toString())
+        assertContains(this.body.toString(), error)
     }
 }
