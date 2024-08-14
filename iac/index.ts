@@ -1,4 +1,5 @@
 import * as pulumi from "@pulumi/pulumi";
+import {Config} from "@pulumi/pulumi";
 import * as aws from "@pulumi/aws";
 import {RolePolicyAttachment} from "@pulumi/aws/iam";
 
@@ -19,19 +20,35 @@ const defaultRole = new aws.iam.Role("habitpal-default-role", {
 `
 });
 
-new RolePolicyAttachment("habitpal-default-role-policy",
-    {
-        role: defaultRole,
-        policyArn: aws.iam.ManagedPolicies.AWSLambdaBasicExecutionRole
-    });
+new RolePolicyAttachment("habitpal-default-role-policy", {
+    role: defaultRole,
+    policyArn: aws.iam.ManagedPolicies.AWSLambdaBasicExecutionRole
+});
+
+new RolePolicyAttachment("habitpal-xray-daemon-write_access-policy", {
+    role: defaultRole,
+    policyArn: aws.iam.ManagedPolicies.AWSXRayDaemonWriteAccess
+});
+
+const awsConfig = new Config("aws")
+const adotLambdaLayerArn = `arn:aws:lambda:${awsConfig.require("region")}:901920570463:layer:aws-otel-java-wrapper-amd64-ver-1-32-0:3`
 
 const lambdaFunction = new aws.lambda.Function("habitpal", {
     code: new pulumi.asset.FileArchive("../build/distributions/habitpal-1.0-SNAPSHOT.zip"),
-    handler: "uk.co.kiteframe.hapitpal.web.ServerlessHabitPal",
+    handler: "uk.co.kiteframe.habitpal.web.ServerlessHabitPal::handleRequest",
     role: defaultRole.arn,
     runtime: "java21",
     memorySize: 256,
-    timeout: 15
+    timeout: 15,
+    layers: [adotLambdaLayerArn],
+    environment: {
+        variables: {
+            AWS_LAMBDA_EXEC_WRAPPER: "/opt/otel-stream-handler"
+        }
+    },
+    tracingConfig: {
+        mode: "Active"
+    }
 });
 
 const logGroupApi = new aws.cloudwatch.LogGroup("habitpal-api-route", {
@@ -69,7 +86,7 @@ let serverlessHttp4kApiRoute = "habitpal";
 const apiDefaultRole = new aws.apigatewayv2.Route(serverlessHttp4kApiRoute + "-api-route", {
     apiId: api.id,
     routeKey: `$default`,
-    target: pulumi.interpolate `integrations/${lambdaIntegration.id}`
+    target: pulumi.interpolate`integrations/${lambdaIntegration.id}`
 });
 
 export const publishedUrl = apiDefaultStage.invokeUrl;
