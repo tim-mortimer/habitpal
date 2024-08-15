@@ -9,7 +9,6 @@ import kotlin.test.assertContains
 import kotlin.test.assertEquals
 
 class StartHabitTest {
-    private val someUuid = "f47ac10b-58cc-4372-a567-0e02b2c3d479"
     private val someName = "journal"
 
     private val client = application()
@@ -28,10 +27,6 @@ class StartHabitTest {
     fun validations() {
         val dailyRequest = startHabitRequest().withValidDailyForm()
         val multipleRequest = startHabitRequest().withValidMultipleForm()
-
-        client(dailyRequest.formWithout("id")).shouldFailWith("formData 'id' is required")
-        client(dailyRequest.replacingForm("id", "")).shouldFailWith("formData 'id' is required")
-        client(dailyRequest.replacingForm("id", "blah")).shouldFailWith("formData 'id' must be string")
 
         client(dailyRequest.formWithout("name")).shouldFailWith("formData 'name' is required")
         client(dailyRequest.replacingForm("name", "")).shouldFailWith("formData 'name' is required")
@@ -54,13 +49,11 @@ class StartHabitTest {
         .header("HX-Request", "true")
 
     private fun Request.withValidDailyForm() = formData(
-        "id" to someUuid,
         "name" to someName,
         "type" to HabitType.DAILY.toString()
     )
 
     private fun Request.withValidMultipleForm() = formData(
-        "id" to someUuid,
         "name" to someName,
         "type" to HabitType.MULTIPLE_TIMES_A_DAY.toString(),
         "times" to "2"

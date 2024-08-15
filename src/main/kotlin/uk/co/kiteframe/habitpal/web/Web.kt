@@ -18,6 +18,7 @@ import uk.co.kiteframe.habitpal.*
 import uk.co.kiteframe.habitpal.persistence.Habits
 import uk.co.kiteframe.habitpal.persistence.InMemoryHabits
 import java.time.Clock
+import java.util.*
 
 fun main() {
     application(InMemoryHabits())
@@ -44,16 +45,15 @@ fun application(
 }
 
 private fun startHabit(application: HabitApplication) = { request: Request ->
-    val idField = FormField.uuid().map { HabitId(it) }.required("id")
     val nameField = FormField.nonBlankString().required("name")
     val typeField = FormField.enum<HabitType>().required("type")
     val timesField = FormField.int().map { Multiple(it) }.optional("times")
-    val feedbackForm = Body.webForm(Validator.Feedback, idField, nameField, typeField, timesField).toLens()
+    val feedbackForm = Body.webForm(Validator.Feedback, nameField, typeField, timesField).toLens()
     val submitted = feedbackForm(request)
     if (submitted.errors.any()) {
         Response(BAD_REQUEST).body(submitted.errors.toString())
     } else {
-        val id = idField(submitted)
+        val id = HabitId(UUID.randomUUID())
         val name = nameField(submitted)
         val type = typeField(submitted)
 
