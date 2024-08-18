@@ -2,6 +2,7 @@ package uk.co.kiteframe.habitpal.web
 
 import org.http4k.core.*
 import org.http4k.core.ContentType.Companion.TEXT_HTML
+import org.http4k.core.Method.GET
 import org.http4k.core.Status.Companion.BAD_REQUEST
 import org.http4k.core.Status.Companion.OK
 import org.http4k.core.Status.Companion.SEE_OTHER
@@ -39,8 +40,9 @@ fun application(
         Request.isHtmx bind routes(
             "/habits" bind Method.POST to startHabit(application)
         ),
+        "/" bind GET to { Response(SEE_OTHER).header("Location", "/habits") },
         "/habits" bind routes(
-            Method.GET to viewHabits(view, application)
+            GET to viewHabits(view, application)
         )
     )
 }
