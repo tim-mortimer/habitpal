@@ -5,7 +5,7 @@
 </head>
 <body>
 <h1>Habitpal</h1>
-<form hx-post="/habits">
+<form hx-post="/habits" hx-target="next tbody" hx-select="tbody > tr">
     <div>
         <label>
             <label for="name">Name</label>
