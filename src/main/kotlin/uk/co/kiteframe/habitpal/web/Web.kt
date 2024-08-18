@@ -4,6 +4,7 @@ import org.http4k.core.*
 import org.http4k.core.ContentType.Companion.TEXT_HTML
 import org.http4k.core.Status.Companion.BAD_REQUEST
 import org.http4k.core.Status.Companion.OK
+import org.http4k.core.Status.Companion.SEE_OTHER
 import org.http4k.lens.*
 import org.http4k.routing.bind
 import org.http4k.routing.htmxWebjars
@@ -60,7 +61,7 @@ private fun startHabit(application: HabitApplication) = { request: Request ->
         when (type) {
             HabitType.DAILY -> {
                 application.startDailyHabit(id, name)
-                Response(OK)
+                Response(SEE_OTHER).header("Location", "/habits")
             }
 
             HabitType.MULTIPLE_TIMES_A_DAY -> {
@@ -73,7 +74,7 @@ private fun startHabit(application: HabitApplication) = { request: Request ->
                         name,
                         times
                     )
-                    Response(OK)
+                    Response(SEE_OTHER).header("Location", "/habits")
                 }
             }
         }

@@ -69,7 +69,8 @@ class StartHabitTest {
         formWithout(name).form(name, value)
 
     private fun Response.shouldSucceed() {
-        assertEquals(Status.OK, this.status)
+        assertEquals(Status.SEE_OTHER, this.status)
+        assertEquals("/habits", this.header("Location"))
     }
 
     private fun Response.shouldFailWith(error: String) {
