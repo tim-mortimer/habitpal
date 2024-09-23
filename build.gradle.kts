@@ -1,5 +1,6 @@
 plugins {
     kotlin("jvm") version "2.0.0"
+    id("org.flywaydb.flyway") version "10.18.0"
     id("org.jooq.jooq-codegen-gradle") version "3.19.11"
 }
 
@@ -54,6 +55,19 @@ kotlin {
 
 tasks.named("compileKotlin") {
     dependsOn(tasks.named("jooqCodegen"))
+}
+
+buildscript {
+    dependencies {
+        classpath("org.flywaydb:flyway-database-postgresql:10.18.0")
+    }
+}
+
+flyway {
+    driver = "org.postgresql.Driver"
+    url = "jdbc:postgresql://localhost:5432/habitpal"
+    user = "habitpal"
+    password = "habitpal"
 }
 
 jooq {
