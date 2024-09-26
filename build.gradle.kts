@@ -9,6 +9,10 @@ version = "1.0-SNAPSHOT"
 
 val jooqVersion = "3.19.11"
 
+val dbUrl = System.getenv("DB_URL") ?: "jdbc:postgresql://localhost:5432/habitpal"
+val dbUser = System.getenv("DB_USER") ?: "habitpal"
+val dbPassword = System.getenv("DB_PASSWORD") ?: "habitpal"
+
 repositories {
     mavenCentral()
 }
@@ -65,18 +69,18 @@ buildscript {
 
 flyway {
     driver = "org.postgresql.Driver"
-    url = "jdbc:postgresql://localhost:5432/habitpal"
-    user = "habitpal"
-    password = "habitpal"
+    url = dbUrl
+    user = dbUser
+    password = dbPassword
 }
 
 jooq {
     configuration {
         jdbc {
             driver = "org.postgresql.Driver"
-            url = "jdbc:postgresql://localhost:5432/habitpal"
-            user = "habitpal"
-            password = "habitpal"
+            url = dbUrl
+            user = dbUser
+            password = dbPassword
         }
 
         generator {
