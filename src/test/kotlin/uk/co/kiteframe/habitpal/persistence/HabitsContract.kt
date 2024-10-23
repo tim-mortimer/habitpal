@@ -1,6 +1,11 @@
 package uk.co.kiteframe.habitpal.persistence
 
+import org.http4k.cloudnative.env.Environment
+import org.junit.jupiter.api.BeforeEach
 import uk.co.kiteframe.habitpal.*
+import uk.co.kiteframe.habitpal.configuring.toDbConfig
+import uk.co.kiteframe.habitpal.configuring.toDslContext
+import uk.co.kiteframe.habitpal.db.tables.references.HABITS
 import java.time.LocalDate
 import java.util.*
 import kotlin.test.Test
@@ -80,3 +85,21 @@ abstract class HabitsContract(private val habits: Habits) {
 }
 
 class InMemoryHabitsTests : HabitsContract(InMemoryHabits())
+
+val environment = Environment.JVM_PROPERTIES overrides
+        Environment.ENV overrides
+        Environment.from(
+            "jdbc.url" to "jdbc:postgresql://localhost:5432/habitpal",
+            "db.username" to "habitpal",
+            "db.password" to "habitpal"
+        )
+
+val dbConfig = environment.toDbConfig()
+val dslContext = dbConfig.toDslContext()
+
+class DbHabitsTests : HabitsContract(DbHabits(dslContext)) {
+    @BeforeEach
+    fun clearDB() {
+        dslContext.truncate(HABITS).execute()
+    }
+}

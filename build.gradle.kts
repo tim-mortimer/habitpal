@@ -24,6 +24,7 @@ dependencies {
     implementation("org.http4k:http4k-server-undertow")
     implementation("org.http4k:http4k-serverless-lambda")
     implementation("org.http4k:http4k-template-handlebars")
+    implementation("org.http4k:http4k-cloudnative")
     implementation("io.arrow-kt:arrow-core:1.2.1")
     implementation("org.slf4j:slf4j-api:2.0.13")
     implementation("ch.qos.logback:logback-core:1.5.6")
@@ -31,6 +32,7 @@ dependencies {
     implementation("org.postgresql:postgresql:42.7.4")
 
     jooqCodegen("org.postgresql:postgresql:42.7.4")
+    implementation("com.zaxxer:HikariCP:5.0.1")
     implementation("org.jooq:jooq:${jooqVersion}")
     compileOnly("org.jooq:jooq-meta:${jooqVersion}")
     compileOnly("org.jooq:jooq-codegen:${jooqVersion}")

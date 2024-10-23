@@ -1,6 +1,6 @@
-CREATE TABLE habits
+CREATE TABLE IF NOT EXISTS habits
 (
-    id          uuid        NOT NULL,
+    id          uuid        NOT NULL PRIMARY KEY,
     name        varchar(40) NOT NULL,
     type        varchar(40) NOT NULL,
     started_on  timestamptz NOT NULL,
