@@ -89,7 +89,7 @@ class InMemoryHabitsTests : HabitsContract(InMemoryHabits())
 val environment = Environment.JVM_PROPERTIES overrides
         Environment.ENV overrides
         Environment.from(
-            "jdbc.url" to "jdbc:postgresql://localhost:5432/habitpal",
+            "jdbc.url" to "jdbc:postgresql://localhost:5433/habitpal",
             "db.username" to "habitpal",
             "db.password" to "habitpal"
         )
