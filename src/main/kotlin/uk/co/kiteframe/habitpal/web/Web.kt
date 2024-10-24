@@ -1,5 +1,6 @@
 package uk.co.kiteframe.habitpal.web
 
+import org.http4k.cloudnative.env.Environment
 import org.http4k.core.*
 import org.http4k.core.ContentType.Companion.TEXT_HTML
 import org.http4k.core.Method.GET
@@ -17,13 +18,26 @@ import org.http4k.template.TemplateRenderer
 import org.http4k.template.ViewModel
 import org.http4k.template.viewModel
 import uk.co.kiteframe.habitpal.*
+import uk.co.kiteframe.habitpal.configuring.toDbConfig
+import uk.co.kiteframe.habitpal.configuring.toDslContext
+import uk.co.kiteframe.habitpal.persistence.DbHabits
 import uk.co.kiteframe.habitpal.persistence.Habits
 import uk.co.kiteframe.habitpal.persistence.InMemoryHabits
 import java.time.Clock
 import java.util.*
 
+val environment = Environment.JVM_PROPERTIES overrides
+        Environment.ENV overrides
+        Environment.from(
+            "jdbc.url" to "jdbc:postgresql://localhost:5432/habitpal",
+            "db.username" to "habitpal",
+            "db.password" to "habitpal"
+        )
+
+val dbConfig = environment.toDbConfig()
+
 fun main() {
-    application(InMemoryHabits())
+    application(DbHabits(dbConfig.toDslContext()))
         .asServer(Undertow(8000))
         .start()
 }
