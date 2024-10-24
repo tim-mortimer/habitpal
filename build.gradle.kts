@@ -1,3 +1,6 @@
+import org.flywaydb.gradle.task.FlywayCleanTask
+import org.flywaydb.gradle.task.FlywayMigrateTask
+
 plugins {
     kotlin("jvm") version "2.0.0"
     id("org.flywaydb.flyway") version "10.18.0"
@@ -10,6 +13,8 @@ version = "1.0-SNAPSHOT"
 val jooqVersion = "3.19.11"
 
 val dbUrl = System.getenv("DB_URL") ?: "jdbc:postgresql://localhost:5432/habitpal"
+val localDbUrl = "jdbc:postgresql://localhost:5432/habitpal"
+val testDbUrl = "jdbc:postgresql://localhost:5433/habitpal"
 val dbUser = System.getenv("DB_USER") ?: "habitpal"
 val dbPassword = System.getenv("DB_PASSWORD") ?: "habitpal"
 
@@ -74,6 +79,28 @@ flyway {
     url = dbUrl
     user = dbUser
     password = dbPassword
+}
+
+tasks.register<FlywayMigrateTask>("migrateLocalDb") {
+    description = "Migrates the local development database"
+    url = localDbUrl
+}
+
+tasks.register<FlywayCleanTask>("cleanLocalDb") {
+    description = "Cleans the local development database"
+    url = localDbUrl
+    cleanDisabled = false
+}
+
+tasks.register<FlywayMigrateTask>("migrateTestDb") {
+    description = "Migrates the local test database"
+    url = testDbUrl
+}
+
+tasks.register<FlywayCleanTask>("cleanTestDb") {
+    description = "Cleans the local test database"
+    url = testDbUrl
+    cleanDisabled = false
 }
 
 jooq {
