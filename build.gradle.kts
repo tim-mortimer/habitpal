@@ -1,3 +1,5 @@
+import com.github.gradle.node.npm.task.NpmTask
+import com.github.gradle.node.npm.task.NpxTask
 import org.flywaydb.gradle.task.FlywayCleanTask
 import org.flywaydb.gradle.task.FlywayMigrateTask
 
@@ -5,6 +7,7 @@ plugins {
     kotlin("jvm") version "2.0.0"
     id("org.flywaydb.flyway") version "10.18.0"
     id("org.jooq.jooq-codegen-gradle") version "3.19.11"
+    id("com.github.node-gradle.node") version "7.0.2"
 }
 
 group = "uk.co.kiteframe.habitpal"
@@ -123,4 +126,28 @@ jooq {
             }
         }
     }
+}
+
+node {
+    version = "23.9.0"
+    npmVersion = "10.9.2"
+    download = true
+}
+
+tasks.register<NpmTask>("installDependencies") {
+    description = "Installs npm dependencies"
+    workingDir = file("src/main/frontend")
+    args = listOf("install")
+}
+
+tasks.register<NpxTask>("buildTailwind") {
+    dependsOn("installDependencies")
+    description = "Builds Tailwind CSS"
+    workingDir = file("src/main/frontend")
+    command = "@tailwindcss/cli"
+    args = listOf("-i", "main.css", "-o", "../resources/static/main.css")
+}
+
+tasks.named("processResources") {
+    dependsOn("buildTailwind")
 }

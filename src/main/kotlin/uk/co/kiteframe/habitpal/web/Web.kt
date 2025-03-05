@@ -8,9 +8,7 @@ import org.http4k.core.Status.Companion.BAD_REQUEST
 import org.http4k.core.Status.Companion.OK
 import org.http4k.core.Status.Companion.SEE_OTHER
 import org.http4k.lens.*
-import org.http4k.routing.bind
-import org.http4k.routing.htmxWebjars
-import org.http4k.routing.routes
+import org.http4k.routing.*
 import org.http4k.server.Undertow
 import org.http4k.server.asServer
 import org.http4k.template.HandlebarsTemplates
@@ -51,6 +49,7 @@ fun application(
 
     return routes(
         htmxWebjars(),
+        static(ResourceLoader.Classpath("/static")),
         Request.isHtmx bind routes(
             "/habits" bind Method.POST to startHabit(application)
         ),
