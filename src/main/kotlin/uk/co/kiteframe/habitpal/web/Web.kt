@@ -1,6 +1,7 @@
 package uk.co.kiteframe.habitpal.web
 
 import org.http4k.cloudnative.env.Environment
+import org.http4k.cloudnative.env.EnvironmentKey
 import org.http4k.core.*
 import org.http4k.core.ContentType.Companion.TEXT_HTML
 import org.http4k.core.Method.GET
@@ -9,6 +10,8 @@ import org.http4k.core.Status.Companion.OK
 import org.http4k.core.Status.Companion.SEE_OTHER
 import org.http4k.lens.*
 import org.http4k.routing.*
+import org.http4k.routing.ResourceLoader.Companion.Classpath
+import org.http4k.routing.ResourceLoader.Companion.Directory
 import org.http4k.server.Undertow
 import org.http4k.server.asServer
 import org.http4k.template.HandlebarsTemplates
@@ -24,20 +27,45 @@ import uk.co.kiteframe.habitpal.persistence.InMemoryHabits
 import java.time.Clock
 import java.util.*
 
-val environment = Environment.JVM_PROPERTIES overrides
+private fun environment() = Environment.JVM_PROPERTIES overrides
         Environment.ENV overrides
         Environment.from(
+            "env" to "production",
             "jdbc.url" to "jdbc:postgresql://localhost:5432/habitpal",
             "db.username" to "habitpal",
             "db.password" to "habitpal"
         )
 
-val dbConfig = environment.toDbConfig()
-
 fun main() {
-    application(DbHabits(dbConfig.toDslContext()))
+    val environment = environment()
+    val dbConfig = environment.toDbConfig()
+
+    application(
+        DbHabits(dbConfig.toDslContext()),
+        templatesFor(environment)
+    )
         .asServer(Undertow(8000))
         .start()
+}
+
+private fun templatesFor(environment: Environment): TemplateRenderer {
+    val env = EnvironmentKey.defaulted("env", "production")(environment)
+
+    return when {
+        env == "production" -> HandlebarsTemplates().CachingClasspath()
+        else -> HandlebarsTemplates().HotReload("src/main/resources")
+    }
+}
+
+private fun staticResourceRouterFor(environment: Environment): RoutingHttpHandler {
+    val env = EnvironmentKey.defaulted("env", "production")(environment)
+
+    val resourceLoader = when {
+        env == "production" -> Classpath("/static")
+        else -> Directory("src/main/resources/static")
+    }
+
+    return static(resourceLoader)
 }
 
 fun application(
@@ -49,7 +77,7 @@ fun application(
 
     return routes(
         htmxWebjars(),
-        static(ResourceLoader.Classpath("/static")),
+        staticResourceRouterFor(environment()),
         Request.isHtmx bind routes(
             "/habits" bind Method.POST to startHabit(application)
         ),

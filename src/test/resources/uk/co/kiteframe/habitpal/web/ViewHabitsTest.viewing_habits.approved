@@ -4,55 +4,57 @@
     <link href="/main.css" rel="stylesheet"/>
     <script src="/htmx.min.js"></script>
   </head>
-  <body class="bg-red-400">
-    <h1>Habitpal</h1>
-    <form hx-post="/habits" hx-target="next tbody" hx-select="tbody &gt; tr">
-      <div>
-        <label>
-          <label for="name">Name</label>
-          <input id="name" name="name" type="text"/>
-        </label>
-      </div>
-      <fieldset>
-        <legend>Type</legend>
-        <ul>
-          <li>
-            <label for="daily">Daily</label>
-            <input type="radio" id="daily" name="type" value="DAILY"/>
-          </li>
-          <li>
-            <label for="multiple_times_a_day">Multiple times a day</label>
-            <input type="radio" id="multiple_times_a_day" name="type" value="MULTIPLE_TIMES_A_DAY"/>
-          </li>
-        </ul>
-      </fieldset>
-      <div>
-        <label>
-          <label for="times">Times</label>
-          <input id="times" name="times" type="number" value=""/>
-        </label>
-      </div>
-      <div>
-        <button type="submit">Submit</button>
-      </div>
-    </form>
-    <table>
-      <thead>
-        <tr>
-          <th scope="col">Todo</th>
-          <th scope="col">Type</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>wash up</td>
-          <td>DAILY</td>
-        </tr>
-        <tr>
-          <td>dry up</td>
-          <td>2 X MULTIPLE_TIMES_A_DAY</td>
-        </tr>
-      </tbody>
-    </table>
+  <body class="bg-gray-100 text-gray-900">
+    <div class="flex flex-col max-w-lg mx-auto">
+      <h1>Habitpal</h1>
+      <form hx-post="/habits" hx-target="next tbody" hx-select="tbody &gt; tr">
+        <div>
+          <label>
+            <label for="name">Name</label>
+            <input id="name" name="name" type="text"/>
+          </label>
+        </div>
+        <fieldset>
+          <legend>Type</legend>
+          <ul>
+            <li>
+              <label for="daily">Daily</label>
+              <input type="radio" id="daily" name="type" value="DAILY"/>
+            </li>
+            <li>
+              <label for="multiple_times_a_day">Multiple times a day</label>
+              <input type="radio" id="multiple_times_a_day" name="type" value="MULTIPLE_TIMES_A_DAY"/>
+            </li>
+          </ul>
+        </fieldset>
+        <div>
+          <label>
+            <label for="times">Times</label>
+            <input id="times" name="times" type="number" value=""/>
+          </label>
+        </div>
+        <div>
+          <button type="submit">Submit</button>
+        </div>
+      </form>
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">Todo</th>
+            <th scope="col">Type</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>wash up</td>
+            <td>DAILY</td>
+          </tr>
+          <tr>
+            <td>dry up</td>
+            <td>2 X MULTIPLE_TIMES_A_DAY</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </body>
 </html>

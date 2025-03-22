@@ -148,6 +148,29 @@ tasks.register<NpxTask>("buildTailwind") {
     args = listOf("-i", "main.css", "-o", "../resources/static/main.css")
 }
 
+tasks.register("watchTailwind") {
+    dependsOn("installDependencies")
+    description = "Runs Tailwind CSS in watch mode using Gradle's Node.js"
+
+    doLast {
+        val nodeBinDir = node.npmWorkDir.dir("npm-v${node.npmVersion.get()}/bin").get()
+        val npxExecutable = nodeBinDir.file("npx").asFile.absolutePath
+        ProcessBuilder(
+            npxExecutable,
+            "@tailwindcss/cli",
+            "-i",
+            "main.css",
+            "-o",
+            "../resources/static/main.css",
+            "--watch=always"
+        )
+            .directory(File("src/main/frontend"))
+            .inheritIO()
+            .start()
+            .waitFor()
+    }
+}
+
 tasks.named("processResources") {
     dependsOn("buildTailwind")
 }
