@@ -4,57 +4,58 @@
     <link href="/main.css" rel="stylesheet"/>
     <script src="/htmx.min.js"></script>
   </head>
-  <body class="bg-gray-100 text-gray-900">
-    <div class="flex flex-col max-w-lg mx-auto">
-      <h1>Habitpal</h1>
-      <form hx-post="/habits" hx-target="next tbody" hx-select="tbody &gt; tr">
-        <div>
-          <label>
-            <label for="name">Name</label>
-            <input id="name" name="name" type="text"/>
-          </label>
+  <body class="bg-gray-50 text-gray-900">
+    <div class="flex">
+      <div class="basis-1/2 bg-blue-500 py-8 px-6 text-gray-50">
+        <h1 class="text-5xl font-medium mb-6">Habitpal.</h1>
+        <p class="text-xl mb-4">Start a new habit...</p>
+        <form hx-post="/habits" hx-target="#habits" hx-select="#habits" class="max-w-md flex flex-col space-y-4">
+          <div class="mb-8">
+            <label class="flex flex-col">
+              <label class="font-semibold mb-1" for="name">Name</label>
+              <input class="bg-blue-50 p-2 rounded-sm text-gray-800" id="name" name="name" type="text"/>
+            </label>
+          </div>
+          <div class="flex space-x-4 mb-6">
+            <div>
+              <label for="daily">
+                <input class="hidden peer" type="radio" id="daily" name="type" value="DAILY" checked="checked"/>
+                <span class="flex flex-col justify-center items-center w-32 text-center peer-checked:font-semibold h-24 rounded-md border-2 peer-checked:border-4 border-white p-4">
+                            Daily
+                        </span>
+              </label>
+            </div>
+            <div>
+              <label for="multiple_times_a_day">
+                <input class="hidden peer" type="radio" id="multiple_times_a_day" name="type" value="MULTIPLE_TIMES_A_DAY"/>
+                <span class="flex flex-col justify-center items-center w-32 text-center peer-checked:font-semibold h-24 rounded-md border-2 peer-checked:border-4 border-white p-4">
+                            Multiple times a day
+                        </span>
+              </label>
+            </div>
+          </div>
+          <div class="mb-6">
+            <label class="flex flex-col">
+              <label class="font-semibold mb-1" for="times">Times</label>
+              <input class="bg-blue-50 p-2 max-w-24 rounded-sm text-gray-800" id="times" name="times" type="number" value=""/>
+            </label>
+          </div>
+          <div>
+            <button class="border-2 bg-white text-blue-500 hover:bg-blue-100 font-medium rounded-lg px-4 py-2" type="submit">Submit
+                </button>
+          </div>
+        </form>
+      </div>
+      <div class="flex flex-col gap-y-4 min-w-2xl mx-auto bg-white px-8 py-12 rounded-2xl h-screen overflow-y-scroll" id="habits">
+        <div class="flex flex-row p-4 bg-blue-50 rounded-full">
+          <div class="basis-1/2 font-semibold">wash up</div>
+          <div class="basis-1/2">DAILY</div>
         </div>
-        <fieldset>
-          <legend>Type</legend>
-          <ul>
-            <li>
-              <label for="daily">Daily</label>
-              <input type="radio" id="daily" name="type" value="DAILY"/>
-            </li>
-            <li>
-              <label for="multiple_times_a_day">Multiple times a day</label>
-              <input type="radio" id="multiple_times_a_day" name="type" value="MULTIPLE_TIMES_A_DAY"/>
-            </li>
-          </ul>
-        </fieldset>
-        <div>
-          <label>
-            <label for="times">Times</label>
-            <input id="times" name="times" type="number" value=""/>
-          </label>
+        <div class="flex flex-row p-4 bg-blue-50 rounded-full">
+          <div class="basis-1/2 font-semibold">dry up</div>
+          <div class="basis-1/2">2 X MULTIPLE_TIMES_A_DAY</div>
         </div>
-        <div>
-          <button type="submit">Submit</button>
-        </div>
-      </form>
-      <table>
-        <thead>
-          <tr>
-            <th scope="col">Todo</th>
-            <th scope="col">Type</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>wash up</td>
-            <td>DAILY</td>
-          </tr>
-          <tr>
-            <td>dry up</td>
-            <td>2 X MULTIPLE_TIMES_A_DAY</td>
-          </tr>
-        </tbody>
-      </table>
+      </div>
     </div>
   </body>
 </html>
