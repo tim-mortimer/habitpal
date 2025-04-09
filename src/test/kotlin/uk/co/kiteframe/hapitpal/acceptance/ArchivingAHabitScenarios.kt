@@ -7,12 +7,12 @@ import uk.co.kiteframe.habitpal.shouldHaveOneEntryMatching
 class ArchivingAHabitScenarios {
     @Scenario
     fun `archiving a habit`() = habitScenario {
-        val firstHabit = startHabit(name = "journal")
-        val secondHabit = startHabit(name = "do 10 sit ups")
+        startHabit(id = "ID1", name = "journal")
+        startHabit(id = "ID2", name = "do 10 sit ups")
 
-        archiveHabitOfId(firstHabit.id)
+        archiveHabitOfId("ID1")
 
-        viewHabits().shouldHaveOneEntryMatching { habit -> habit shouldBe secondHabit }
+        viewHabits().shouldHaveOneEntryMatching { it.id shouldBe "ID2" }
     }
 
     @Scenario
@@ -24,10 +24,10 @@ class ArchivingAHabitScenarios {
 
     @Scenario
     fun `archiving a habit is handled in an idempotent fashion`() = habitScenario {
-        val firstHabit = startHabit(name = "journal")
+        startHabit(id = "ID1", name = "journal")
 
-        archiveHabitOfId(firstHabit.id)
-        archiveHabitOfId(firstHabit.id)
+        archiveHabitOfId("ID1")
+        archiveHabitOfId("ID1")
 
         viewHabits().shouldBeEmpty()
     }
