@@ -4,6 +4,7 @@ import org.http4k.core.*
 import org.http4k.core.body.form
 import org.http4k.core.body.toBody
 import uk.co.kiteframe.habitpal.HabitType
+import java.util.*
 import kotlin.test.Test
 import kotlin.test.assertContains
 import kotlin.test.assertEquals
@@ -44,9 +45,26 @@ class StartHabitTest {
         client(multipleRequest.replacingForm("times", "-5")).shouldFailWith("formData 'times' must be >= 2")
     }
 
+    @Test
+    fun `idempotency keys are required on idempotency protected endpoints`() {
+        val request = anIdempotencyProtectedRequest().replaceHeader("Idempotency-Key", null)
+        val response = client(request)
+        assertEquals(400, response.status.code)
+    }
+
+    @Test
+    fun `it returns BAD_REQUEST when the provided idempotency key is invalid`() {
+        val request = anIdempotencyProtectedRequest().replaceHeader("Idempotency-Key", "asdfl232hddskhds")
+        val response = client(request)
+        assertEquals(400, response.status.code)
+    }
+
+    private fun anIdempotencyProtectedRequest() = startHabitRequest().withValidDailyForm()
+
     private fun startHabitRequest() = Request(Method.POST, "/habits")
         .header("Content-Type", ContentType.APPLICATION_FORM_URLENCODED.value)
         .header("HX-Request", "true")
+        .header("Idempotency-Key", UUID.randomUUID().toString())
 
     private fun Request.withValidDailyForm() = formData(
         "name" to someName,
