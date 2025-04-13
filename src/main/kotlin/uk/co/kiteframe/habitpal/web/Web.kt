@@ -77,7 +77,8 @@ fun webApplication(
         htmxWebjars(),
         staticResourceRouterFor(environment()),
         Request.isHtmx bind routes(
-            "/habits" bind Method.POST to startHabit(application)
+            "/habits" bind Method.POST to startHabit(application),
+            "/habits/{id}/archive" bind Method.PUT to archiveHabit(application),
         ),
         "/" bind GET to { Response(SEE_OTHER).header("Location", "/habits") },
         "/habits" bind routes(
@@ -119,6 +120,18 @@ private fun startHabit(application: HabitApplication) = { request: Request ->
                 }
             }
         }
+    }
+}
+
+private fun archiveHabit(application: HabitApplication) = { request: Request ->
+    val habitIdInPath = Path.uuid().of("id")
+
+    try {
+        val habitId = habitIdInPath(request)
+        application.archiveHabit(HabitId(habitId))
+        Response(OK)
+    } catch (e: LensFailure) {
+        Response(BAD_REQUEST)
     }
 }
 
