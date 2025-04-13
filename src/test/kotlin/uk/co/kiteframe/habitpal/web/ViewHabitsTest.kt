@@ -3,12 +3,14 @@ package uk.co.kiteframe.habitpal.web
 import org.http4k.core.Method
 import org.http4k.core.Request
 import org.http4k.core.Status
+import org.http4k.template.HandlebarsTemplates
 import org.http4k.testing.Approver
 import org.http4k.testing.HtmlApprovalTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.extension.ExtendWith
 import uk.co.kiteframe.habitpal.*
 import uk.co.kiteframe.habitpal.persistence.InMemoryHabits
+import java.time.Clock
 import java.time.LocalDate
 import java.util.*
 import kotlin.test.Test
@@ -17,7 +19,10 @@ import kotlin.test.assertEquals
 @ExtendWith(HtmlApprovalTest::class)
 class ViewHabitsTest {
     private val habits = InMemoryHabits()
-    private val client = application(habits)
+    private val client = webApplication(
+        HabitApplication(Clock.systemUTC(), habits),
+        HandlebarsTemplates().CachingClasspath()
+    )
 
     @BeforeEach
     fun setup() {

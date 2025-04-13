@@ -3,15 +3,19 @@ package uk.co.kiteframe.habitpal.web
 import org.http4k.core.*
 import org.http4k.core.body.form
 import org.http4k.core.body.toBody
+import org.http4k.template.HandlebarsTemplates
+import uk.co.kiteframe.habitpal.HabitApplication
 import uk.co.kiteframe.habitpal.HabitType
+import uk.co.kiteframe.habitpal.persistence.InMemoryHabits
+import java.time.Clock
 import kotlin.test.Test
 import kotlin.test.assertContains
 import kotlin.test.assertEquals
 
 class StartHabitTest {
     private val someName = "journal"
-
-    private val client = application()
+    private val application = HabitApplication(Clock.systemUTC(), InMemoryHabits())
+    private val client = webApplication(application, HandlebarsTemplates().CachingClasspath())
 
     @Test
     fun `starting a daily habit`() {

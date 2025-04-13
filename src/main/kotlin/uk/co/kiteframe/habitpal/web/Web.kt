@@ -22,8 +22,6 @@ import uk.co.kiteframe.habitpal.*
 import uk.co.kiteframe.habitpal.configuring.toDbConfig
 import uk.co.kiteframe.habitpal.configuring.toDslContext
 import uk.co.kiteframe.habitpal.persistence.DbHabits
-import uk.co.kiteframe.habitpal.persistence.Habits
-import uk.co.kiteframe.habitpal.persistence.InMemoryHabits
 import java.time.Clock
 import java.util.*
 
@@ -40,9 +38,10 @@ fun main() {
     val environment = environment()
     val dbConfig = environment.toDbConfig()
 
-    application(
-        DbHabits(dbConfig.toDslContext()),
-        templatesFor(environment)
+    val habits = DbHabits(dbConfig.toDslContext())
+    val application = HabitApplication(Clock.systemUTC(), habits)
+    webApplication(
+        application, templatesFor(environment)
     )
         .asServer(Undertow(8000))
         .start()
@@ -68,11 +67,10 @@ private fun staticResourceRouterFor(environment: Environment): RoutingHttpHandle
     return static(resourceLoader)
 }
 
-fun application(
-    habits: Habits = InMemoryHabits(),
+fun webApplication(
+    application: HabitApplication,
     renderer: TemplateRenderer = HandlebarsTemplates().CachingClasspath()
 ): HttpHandler {
-    val application = HabitApplication(Clock.systemUTC(), habits)
     val view = Body.viewModel(renderer, TEXT_HTML).toLens()
 
     return routes(
